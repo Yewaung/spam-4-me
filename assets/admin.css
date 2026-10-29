@@ -1,0 +1,145 @@
+.s4m-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+	gap: 12px;
+	margin: 16px 0;
+}
+
+.s4m-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.s4m-card--wide {
+	grid-column: span 2;
+}
+
+.s4m-card__num {
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+.s4m-card__label,
+.s4m-muted {
+	color: #646970;
+}
+
+.s4m-reasons {
+	margin: 4px 0 0;
+}
+
+.s4m-reasons li {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 0 2px;
+}
+
+.s4m-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 10px;
+	font-size: 12px;
+	font-weight: 600;
+	background: #f0f0f1;
+	color: #1d2327;
+	cursor: help;
+}
+
+.s4m-badge--keyword,
+.s4m-badge--script,
+.s4m-badge--blocked_ip {
+	background: #fcf0f1;
+	color: #8a2424;
+}
+
+.s4m-badge--honeypot,
+.s4m-badge--no_js,
+.s4m-badge--too_fast,
+.s4m-badge--rate_limit {
+	background: #f0f6fc;
+	color: #0a4b78;
+}
+
+.s4m-badge--link,
+.s4m-badge--disposable_email {
+	background: #fcf9e8;
+	color: #614a00;
+}
+
+.s4m-detail {
+	font-family: Consolas, Monaco, monospace;
+	font-size: 12px;
+}
+
+.s4m-excerpt {
+	color: #50575e;
+}
+
+.s4m-why {
+	background: #fff;
+	border-left: 4px solid #d63638;
+	padding: 8px 14px;
+	margin: 12px 0;
+}
+
+.s4m-detail-table th {
+	width: 160px;
+	font-weight: 600;
+}
+
+.s4m-detail-table tr.s4m-hit th,
+.s4m-detail-table tr.s4m-hit td {
+	background: #fcf0f1;
+}
+
+.s4m-value {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.s4m-actions .button {
+	margin-right: 6px;
+}
+
+.s4m-clear {
+	margin-top: 12px;
+}
+
+.s4m-columns {
+	columns: 2 220px;
+}
+
+.s4m-columns label {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.s4m-list {
+	margin-bottom: 8px;
+}
+
+.s4m-list details {
+	margin: 2px 0 0 24px;
+}
+
+.s4m-terms {
+	max-width: 720px;
+	color: #50575e;
+	font-size: 12px;
+}
+
+.s4m-result ul {
+	margin-left: 4px;
+}
+
+@media (max-width: 782px) {
+	.s4m-card--wide {
+		grid-column: span 1;
+	}
+}
