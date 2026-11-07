@@ -2,6 +2,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Spam 4 Me's own log table: WordPress has no API for custom tables, the table name is fixed ({$wpdb->prefix}s4m_log) and every value goes through $wpdb->prepare().
+
 class S4M_Log {
 	const DB_VERSION = '1';
 
@@ -73,40 +75,40 @@ class S4M_Log {
 
 		$reasons = array(
 			'blocked_ip'       => array(
-				'label' => __( 'Blocked IP', 'spam-4-me' ),
-				'help'  => __( 'The sender\'s IP address is on your block list.', 'spam-4-me' ),
+				'label' => __( 'Blocked IP', 'spam4me' ),
+				'help'  => __( 'The sender\'s IP address is on your block list.', 'spam4me' ),
 			),
 			'honeypot'         => array(
-				'label' => __( 'Bot trap', 'spam-4-me' ),
-				'help'  => __( 'A hidden field that people cannot see was filled in. Only bots do this.', 'spam-4-me' ),
+				'label' => __( 'Bot trap', 'spam4me' ),
+				'help'  => __( 'A hidden field that people cannot see was filled in. Only bots do this.', 'spam4me' ),
 			),
 			'no_js'            => array(
-				'label' => __( 'Browser check failed', 'spam-4-me' ),
-				'help'  => __( 'The form was sent without running JavaScript, as bots that post forms directly do.', 'spam-4-me' ),
+				'label' => __( 'Browser check failed', 'spam4me' ),
+				'help'  => __( 'The form was sent without running JavaScript, as bots that post forms directly do.', 'spam4me' ),
 			),
 			'too_fast'         => array(
-				'label' => __( 'Sent too fast', 'spam-4-me' ),
-				'help'  => __( 'The form was sent faster than a person can fill it in.', 'spam-4-me' ),
+				'label' => __( 'Sent too fast', 'spam4me' ),
+				'help'  => __( 'The form was sent faster than a person can fill it in.', 'spam4me' ),
 			),
 			'rate_limit'       => array(
-				'label' => __( 'Too many messages', 'spam-4-me' ),
-				'help'  => __( 'Too many messages were sent from this IP address within an hour.', 'spam-4-me' ),
+				'label' => __( 'Too many messages', 'spam4me' ),
+				'help'  => __( 'Too many messages were sent from this IP address within an hour.', 'spam4me' ),
 			),
 			'disposable_email' => array(
-				'label' => __( 'Throwaway email', 'spam-4-me' ),
-				'help'  => __( 'The email address uses a temporary, throwaway email service.', 'spam-4-me' ),
+				'label' => __( 'Throwaway email', 'spam4me' ),
+				'help'  => __( 'The email address uses a temporary, throwaway email service.', 'spam4me' ),
 			),
 			'script'           => array(
-				'label' => __( 'Blocked language', 'spam-4-me' ),
-				'help'  => __( 'The message is written in a script (alphabet) you chose to block.', 'spam-4-me' ),
+				'label' => __( 'Blocked language', 'spam4me' ),
+				'help'  => __( 'The message is written in a script (alphabet) you chose to block.', 'spam4me' ),
 			),
 			'keyword'          => array(
-				'label' => __( 'Banned word', 'spam-4-me' ),
-				'help'  => __( 'The message contains a banned word or phrase.', 'spam-4-me' ),
+				'label' => __( 'Banned word', 'spam4me' ),
+				'help'  => __( 'The message contains a banned word or phrase.', 'spam4me' ),
 			),
 			'link'             => array(
-				'label' => __( 'Link in message', 'spam-4-me' ),
-				'help'  => __( 'The message contains a web link. The visitor was asked to remove it.', 'spam-4-me' ),
+				'label' => __( 'Link in message', 'spam4me' ),
+				'help'  => __( 'The message contains a web link. The visitor was asked to remove it.', 'spam4me' ),
 			),
 		);
 
@@ -199,7 +201,7 @@ class S4M_Log {
 		$table        = self::table();
 		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE id IN ({$placeholders})", $ids ) );
+		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE id IN ({$placeholders})", $ids ) ); // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- one %d per id, built above.
 	}
 
 	public static function clear() {
@@ -254,7 +256,7 @@ class S4M_Log {
 
 	public static function register_exporter( $exporters ) {
 		$exporters['spam-4-me'] = array(
-			'exporter_friendly_name' => __( 'Spam 4 Me blocked messages', 'spam-4-me' ),
+			'exporter_friendly_name' => __( 'Spam 4 Me blocked messages', 'spam4me' ),
 			'callback'               => array( __CLASS__, 'export' ),
 		);
 
@@ -263,7 +265,7 @@ class S4M_Log {
 
 	public static function register_eraser( $erasers ) {
 		$erasers['spam-4-me'] = array(
-			'eraser_friendly_name' => __( 'Spam 4 Me blocked messages', 'spam-4-me' ),
+			'eraser_friendly_name' => __( 'Spam 4 Me blocked messages', 'spam4me' ),
 			'callback'             => array( __CLASS__, 'erase' ),
 		);
 
@@ -281,23 +283,23 @@ class S4M_Log {
 		foreach ( $rows as $row ) {
 			$data[] = array(
 				'group_id'    => 'spam-4-me',
-				'group_label' => __( 'Blocked form messages', 'spam-4-me' ),
+				'group_label' => __( 'Blocked form messages', 'spam4me' ),
 				'item_id'     => 's4m-' . $row->id,
 				'data'        => array(
 					array(
-						'name'  => __( 'Date', 'spam-4-me' ),
+						'name'  => __( 'Date', 'spam4me' ),
 						'value' => $row->created_at,
 					),
 					array(
-						'name'  => __( 'Form', 'spam-4-me' ),
+						'name'  => __( 'Form', 'spam4me' ),
 						'value' => $row->form_title,
 					),
 					array(
-						'name'  => __( 'IP address', 'spam-4-me' ),
+						'name'  => __( 'IP address', 'spam4me' ),
 						'value' => $row->ip,
 					),
 					array(
-						'name'  => __( 'Message', 'spam-4-me' ),
+						'name'  => __( 'Message', 'spam4me' ),
 						'value' => (string) $row->content,
 					),
 				),

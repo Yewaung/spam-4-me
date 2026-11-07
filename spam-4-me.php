@@ -1,19 +1,21 @@
 <?php
 /**
  * Plugin Name: Spam 4 Me
+ * Plugin URI: https://www.thestickpress.com/plugins/spam4me/
  * Description: Spam protection for Contact Form 7, WPForms, Gravity Forms, Ninja Forms and Fluent Forms: invisible bot checks, banned words in many languages, link and language blocking, a locked autoreply subject, and a log that shows exactly why each message was blocked.
- * Version: 2.2.0
+ * Version: 2.4.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
- * Author: 4 Me
+ * Author: TheStickPress
+ * Author URI: https://www.thestickpress.com/
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: spam-4-me
+ * Text Domain: spam4me
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'S4M_VERSION', '2.2.0' );
+define( 'S4M_VERSION', '2.4.0' );
 define( 'S4M_FILE', __FILE__ );
 define( 'S4M_DIR', plugin_dir_path( __FILE__ ) );
 define( 'S4M_URL', plugin_dir_url( __FILE__ ) );
@@ -33,7 +35,11 @@ require_once S4M_DIR . 'includes/fluent-forms.php';
 S4M_Log::init();
 
 if ( is_admin() ) {
+	if ( ! class_exists( 'TheStickPress_Hub_1', false ) ) {
+		require_once S4M_DIR . 'hub/class-thestickpress-hub-1.php';
+	}
 	require_once S4M_DIR . 'admin/class-s4m-admin.php';
+	require_once S4M_DIR . 'admin/hub.php';
 	S4M_Admin::init();
 }
 

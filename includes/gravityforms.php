@@ -2,6 +2,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Gravity Forms field properties (pageNumber, adminLabel, cssClass).
+
 function s4m_gf_form_tag( $form_tag ) {
 	return $form_tag . s4m_hidden_inputs_html();
 }

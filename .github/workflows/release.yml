@@ -1,0 +1,24 @@
+# Builds the WordPress.org-ready ZIP (without development files, see .distignore)
+# when a version tag is pushed, for example: git tag v1.3.0 && git push --tags
+name: Release ZIP
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    env:
+      SLUG: spam4me
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the plugin ZIP
+        run: |
+          mkdir -p build/$SLUG
+          rsync -a --exclude-from=.distignore --exclude=build ./ build/$SLUG/
+          cd build && zip -rq ../$SLUG.zip $SLUG
+      - name: Attach it to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.SLUG }}.zip

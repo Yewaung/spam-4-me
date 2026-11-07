@@ -14,7 +14,7 @@ function s4m_honeypot_html() {
 
 	return sprintf(
 		'<span class="s4m-field" aria-hidden="true" style="position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden"><label>%1$s <input type="text" name="%2$s" value="" tabindex="-1" autocomplete="off"></label></span>',
-		esc_html__( 'Leave this field empty', 'spam-4-me' ),
+		esc_html__( 'Leave this field empty', 'spam4me' ),
 		esc_attr( S4M_HONEYPOT )
 	);
 }
@@ -45,7 +45,9 @@ function s4m_enqueue_script() {
 add_action( 'wp_enqueue_scripts', 's4m_enqueue_script' );
 
 function s4m_posted( $name ) {
-	$value = isset( $_POST[ $name ] ) ? wp_unslash( $_POST[ $name ] ) : '';
+	// Reads a field of another plugin's form while that plugin processes it (the form plugin checks its own nonce);
+	// the value is only inspected for spam, never saved or printed as is.
+	$value = isset( $_POST[ $name ] ) ? wp_unslash( $_POST[ $name ] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 	return is_string( $value ) ? $value : '';
 }
@@ -102,7 +104,7 @@ function s4m_check_request( $settings, $posted = null ) {
 		if ( $elapsed < (int) $settings['min_seconds'] ) {
 			return array(
 				'reason' => 'too_fast',
-				'detail' => sprintf( _n( '%d second', '%d seconds', $elapsed, 'spam-4-me' ), $elapsed ),
+				'detail' => sprintf( /* translators: %d: seconds. */ _n( '%d second', '%d seconds', $elapsed, 'spam4me' ), $elapsed ),
 			);
 		}
 	}
@@ -120,7 +122,7 @@ function s4m_check_rate_limit( $settings, $ip ) {
 		if ( $count > (int) $settings['rate_limit'] ) {
 			return array(
 				'reason' => 'rate_limit',
-				'detail' => sprintf( __( '%d in the last hour', 'spam-4-me' ), $count ),
+				'detail' => sprintf( /* translators: %d: number of messages. */ __( '%d in the last hour', 'spam4me' ), $count ),
 			);
 		}
 	}
@@ -178,7 +180,7 @@ function s4m_autoreply_subject() {
 	$subject  = trim( $settings['autoreply_subject'] );
 
 	if ( '' === $subject ) {
-		$subject = sprintf( __( 'Thank you for contacting %s', 'spam-4-me' ), get_bloginfo( 'name' ) );
+		$subject = sprintf( /* translators: %s: site name. */ __( 'Thank you for contacting %s', 'spam4me' ), get_bloginfo( 'name' ) );
 	}
 
 	return $subject;
@@ -187,11 +189,11 @@ function s4m_autoreply_subject() {
 function s4m_link_message() {
 	$settings = s4m_settings();
 
-	return '' !== trim( $settings['link_message'] ) ? $settings['link_message'] : __( 'Links are not allowed in this field.', 'spam-4-me' );
+	return '' !== trim( $settings['link_message'] ) ? $settings['link_message'] : __( 'Links are not allowed in this field.', 'spam4me' );
 }
 
 function s4m_block_message() {
-	return __( 'There was an error trying to send your message. Please try again later.', 'spam-4-me' );
+	return __( 'There was an error trying to send your message. Please try again later.', 'spam4me' );
 }
 
 function s4m_sends_to_visitor( $recipients, array $typed ) {

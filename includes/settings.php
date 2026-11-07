@@ -12,7 +12,6 @@ function s4m_default_settings() {
 		'block_links'       => 1,
 		'link_message'      => '',
 		'link_fields'       => "link*\nurl\nwebsite*\nweb site\nhomepage\nportfolio\ngithub\nfacebook\ninstagram\ntwitter\nsocial*",
-		'link_fields'       => "link*\nurl\nwebsite*\nweb site\nhomepage\nportfolio\ngithub\nfacebook\ninstagram\ntwitter\nsocial*",
 		'scripts'           => array( 'cyrillic' ),
 		'categories'        => array_keys( s4m_keyword_lists() ),
 		'keywords'          => '',

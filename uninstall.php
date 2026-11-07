@@ -2,6 +2,8 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- removing the plugin's own log table and options on uninstall.
+
 global $wpdb;
 
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}s4m_log" );

@@ -7,7 +7,7 @@ function s4m_ninja_after_form( $form_id ) {
 		'<div class="s4m-nf" data-s4m-form="%1$s"><input type="hidden" name="_s4m_t" value="%2$s">%3$s</div>',
 		esc_attr( strtok( (string) $form_id, '_' ) ),
 		esc_attr( s4m_make_token() ),
-		s4m_honeypot_html()
+		s4m_honeypot_html() // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in s4m_honeypot_html().
 	);
 }
 add_action( 'ninja_forms_after_form_display', 's4m_ninja_after_form' );
@@ -63,7 +63,7 @@ function s4m_ninja_log_block( array $hit, $form_data, array $fields, array $emai
 		$hit,
 		array(
 			'id'    => $id,
-			'title' => '' !== $title ? $title : sprintf( __( 'Ninja Forms #%d', 'spam-4-me' ), $id ),
+			'title' => '' !== $title ? $title : sprintf( /* translators: %d: form ID. */ __( 'Ninja Forms #%d', 'spam4me' ), $id ),
 			'url'   => (string) wp_get_raw_referer(),
 		),
 		$fields,

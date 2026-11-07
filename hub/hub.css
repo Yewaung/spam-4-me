@@ -1,0 +1,180 @@
+/*
+ * TheStickPress admin design: one look for every 4 Me plugin screen.
+ * 4ME colours (lime and ink), calm cards, rounded controls, switches,
+ * tooltips and one way to add, remove and save rows. Everything is scoped to
+ * body.tsp-admin, which the hub adds to the 4 Me screens only.
+ */
+
+body.tsp-admin {
+	--tsp-ink: #151515;
+	--tsp-ink-2: #4b4f58;
+	--tsp-ink-3: #7f848d;
+	--tsp-line: #e6e8e1;
+	--tsp-line-2: #d5d9cc;
+	--tsp-bg: #f5f6f1;
+	--tsp-card: #ffffff;
+	--tsp-lime: #daf75b;
+	--tsp-lime-600: #c3e23d;
+	--tsp-lime-50: #f6fcdc;
+	--tsp-olive: #4c6100;
+	--tsp-danger: #c8323a;
+	--tsp-danger-50: #fdeeee;
+	--tsp-radius: 14px;
+	--tsp-radius-sm: 10px;
+	--tsp-shadow: 0 1px 2px rgb(21 21 21 / 4%), 0 8px 24px rgb(21 21 21 / 6%);
+	background: var(--tsp-bg);
+}
+
+body.tsp-admin #wpcontent { background: var(--tsp-bg); }
+body.tsp-admin .wrap { max-width: 1180px; color: var(--tsp-ink); }
+body.tsp-admin .wrap > h1,
+body.tsp-admin .wrap > h1.wp-heading-inline { font-size: 26px; font-weight: 600; letter-spacing: -.01em; color: var(--tsp-ink); }
+body.tsp-admin .wrap h2 { font-size: 17px; font-weight: 600; color: var(--tsp-ink); margin: 28px 0 8px; }
+body.tsp-admin .wrap p { color: var(--tsp-ink-2); }
+body.tsp-admin .wrap a:not(.button):not(.nav-tab):not(.page-title-action) { color: var(--tsp-olive); }
+body.tsp-admin .wrap a:focus,
+body.tsp-admin .wrap :is(input, select, textarea, button):focus-visible { outline: 3px solid color-mix(in srgb, var(--tsp-lime) 80%, #000 0%); outline-offset: 1px; box-shadow: none; }
+
+/* Intro card (what this page does, in plain words). */
+/* Marked as a notice so WordPress moves it under the page title; the notice look is reset here. */
+.tsp-intro.notice { border-left-width: 1px; border-left-color: var(--tsp-line); padding: 18px 22px; }
+.tsp-intro { display: flex; gap: 18px; align-items: flex-start; margin: 18px 20px 8px 0; padding: 18px 22px; background: var(--tsp-card); border: 1px solid var(--tsp-line); border-radius: var(--tsp-radius); box-shadow: var(--tsp-shadow); max-width: 1136px; }
+.tsp-intro__icon svg { display: block; width: 48px; height: 48px; }
+.tsp-intro__title { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: var(--tsp-ink); }
+.tsp-intro__text { margin: 0; color: var(--tsp-ink-2); max-width: 760px; }
+.tsp-intro__steps { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; padding: 0; list-style: none; counter-reset: tsp-step; }
+.tsp-intro__steps li { counter-increment: tsp-step; display: flex; align-items: center; gap: 8px; margin: 0; color: var(--tsp-ink-2); }
+.tsp-intro__steps li::before { content: counter(tsp-step); display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--tsp-lime); color: var(--tsp-ink); font-size: 12px; font-weight: 700; }
+
+/* Tabs as a segmented control. */
+body.tsp-admin .nav-tab-wrapper,
+body.tsp-admin .fourme-tabs { display: inline-flex; flex-wrap: wrap; gap: 4px; margin: 14px 0 18px; padding: 4px; border: 1px solid var(--tsp-line); border-radius: 999px; background: var(--tsp-card); box-shadow: var(--tsp-shadow); }
+body.tsp-admin .nav-tab { margin: 0; padding: 7px 16px; border: 0; border-radius: 999px; background: transparent; color: var(--tsp-ink-2); font-size: 13px; font-weight: 500; line-height: 1.4; }
+body.tsp-admin .nav-tab:hover { background: var(--tsp-bg); color: var(--tsp-ink); }
+body.tsp-admin .nav-tab-active,
+body.tsp-admin .nav-tab-active:hover,
+body.tsp-admin .nav-tab-active:focus { background: var(--tsp-ink); color: #fff; }
+
+/* Settings as cards. */
+body.tsp-admin .form-table { background: var(--tsp-card); border: 1px solid var(--tsp-line); border-radius: var(--tsp-radius); box-shadow: var(--tsp-shadow); border-collapse: separate; border-spacing: 0; overflow: hidden; margin: 8px 0 20px; }
+body.tsp-admin .form-table th { width: 240px; padding: 18px 20px; color: var(--tsp-ink); font-weight: 600; vertical-align: top; }
+body.tsp-admin .form-table td { padding: 16px 20px; color: var(--tsp-ink-2); }
+body.tsp-admin .form-table tr + tr > :is(th, td) { border-top: 1px solid var(--tsp-line); }
+body.tsp-admin .form-table td p.description,
+body.tsp-admin .wrap p.description { position: relative; margin-top: 6px; padding-left: 22px; color: var(--tsp-ink-3); font-style: normal; }
+body.tsp-admin .wrap p.description::before { content: "i"; position: absolute; left: 0; top: 2px; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: var(--tsp-lime-50); color: var(--tsp-olive); font: 700 10px/1 Georgia, serif; }
+
+/* Fields. */
+body.tsp-admin .wrap :is(input[type="text"], input[type="url"], input[type="email"], input[type="number"], input[type="search"], input[type="password"], input[type="tel"], select, textarea) { min-height: 38px; border: 1px solid var(--tsp-line-2); border-radius: var(--tsp-radius-sm); background: #fff; color: var(--tsp-ink); box-shadow: none; }
+body.tsp-admin .wrap :is(input, select, textarea):focus { border-color: var(--tsp-ink); }
+
+/* Yes / no settings as switches. */
+body.tsp-admin .form-table input[type="checkbox"],
+body.tsp-admin .tsp-switch { appearance: none; -webkit-appearance: none; position: relative; width: 38px; height: 22px; margin: 0 8px 0 0; border: 0; border-radius: 999px; background: var(--tsp-line-2); vertical-align: -6px; cursor: pointer; transition: background .15s; box-shadow: none; }
+body.tsp-admin .form-table input[type="checkbox"]::before,
+body.tsp-admin .tsp-switch::before { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; margin: 0; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 25%); transition: transform .15s; }
+body.tsp-admin .form-table input[type="checkbox"]:checked,
+body.tsp-admin .tsp-switch:checked { background: var(--tsp-ink); }
+body.tsp-admin .form-table input[type="checkbox"]:checked::before,
+body.tsp-admin .tsp-switch:checked::before { transform: translateX(16px); background: var(--tsp-lime); }
+
+/* Buttons. */
+body.tsp-admin .wrap .button,
+body.tsp-admin .tsp-savebar .button { min-height: 36px; padding: 0 16px; border: 1px solid var(--tsp-line-2); border-radius: 999px; background: #fff; color: var(--tsp-ink); font-weight: 500; line-height: 34px; box-shadow: none; }
+body.tsp-admin .wrap .button:hover { border-color: var(--tsp-ink); color: var(--tsp-ink); }
+body.tsp-admin .wrap .button-primary,
+body.tsp-admin .tsp-savebar .button-primary { border-color: var(--tsp-lime); background: var(--tsp-lime); color: var(--tsp-ink); font-weight: 600; }
+body.tsp-admin .wrap .button-primary:hover,
+body.tsp-admin .tsp-savebar .button-primary:hover { border-color: var(--tsp-lime-600); background: var(--tsp-lime-600); color: var(--tsp-ink); }
+body.tsp-admin .wrap :is(.button-link-delete, .submitdelete, .delete) { color: var(--tsp-danger); }
+
+/* Row tables (types, fields, prices ...). */
+body.tsp-admin :is(.fourme-table, .e4m-rows, .s4m-detail-table) { width: 100%; background: var(--tsp-card); border: 1px solid var(--tsp-line); border-radius: var(--tsp-radius); box-shadow: var(--tsp-shadow); border-collapse: separate; border-spacing: 0; overflow: hidden; }
+body.tsp-admin :is(.fourme-table, .e4m-rows) th { padding: 12px 12px; background: #fafbf7; color: var(--tsp-ink-3); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; text-align: left; }
+body.tsp-admin :is(.fourme-table, .e4m-rows) td { padding: 12px; vertical-align: top; }
+body.tsp-admin .fourme-table select { min-width: 7.5em; }
+body.tsp-admin .fourme-table input[type="text"] { min-width: 6.5em; }
+body.tsp-admin :is(.fourme-table, .e4m-rows) tr + tr > td,
+body.tsp-admin :is(.fourme-table, .e4m-rows) tbody tr > td { border-top: 1px solid var(--tsp-line); }
+body.tsp-admin .wp-list-table { border-color: var(--tsp-line); border-radius: var(--tsp-radius); overflow: hidden; box-shadow: var(--tsp-shadow); }
+
+/* Row states and row buttons (hub.js). */
+.tsp-row-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border: 1px solid var(--tsp-line-2); border-radius: 999px; background: #fff; color: var(--tsp-ink-2); font-size: 13px; cursor: pointer; white-space: nowrap; }
+.tsp-row-btn:hover { border-color: var(--tsp-danger); color: var(--tsp-danger); }
+.tsp-row-btn svg { width: 15px; height: 15px; }
+.tsp-row-removed > td { background: var(--tsp-danger-50); }
+.tsp-row-removed > td:not(.tsp-row-actions) > * { opacity: .45; text-decoration: line-through; pointer-events: none; }
+.tsp-row-removed .tsp-row-btn { border-color: var(--tsp-ink); color: var(--tsp-ink); }
+.tsp-row-note { display: block; margin-top: 6px; color: var(--tsp-danger); font-size: 12px; }
+.tsp-row-note[hidden] { display: none; }
+.tsp-row-lock { display: inline-flex; align-items: center; gap: 6px; color: var(--tsp-ink-3); font-size: 12px; }
+.tsp-row-lock svg { width: 15px; height: 15px; }
+.tsp-add-row { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 16px; border: 1px dashed var(--tsp-ink-3); border-radius: 999px; background: transparent; color: var(--tsp-ink); font-weight: 500; cursor: pointer; }
+.tsp-add-row:hover { border-style: solid; background: var(--tsp-lime-50); }
+.tsp-row-new > td { background: var(--tsp-lime-50); }
+.tsp-hidden-cell { display: none; }
+
+/* Tooltips: <span class="tsp-tip" tabindex="0" data-tip="..."></span> */
+.tsp-tip { position: relative; display: inline-grid; place-items: center; width: 17px; height: 17px; margin-left: 6px; border-radius: 50%; background: var(--tsp-lime-50); color: var(--tsp-olive); font: 700 11px/1 -apple-system, "Segoe UI", sans-serif; text-transform: none; letter-spacing: 0; vertical-align: 1px; cursor: help; }
+.tsp-tip::before { content: "?"; }
+.tsp-tip::after { content: attr(data-tip); position: absolute; z-index: 100000; left: 50%; bottom: calc(100% + 8px); width: max-content; max-width: 280px; padding: 9px 12px; border-radius: 10px; background: var(--tsp-ink); color: #fff; font: 400 12.5px/1.45 -apple-system, "Segoe UI", sans-serif; text-align: left; white-space: normal; box-shadow: var(--tsp-shadow); opacity: 0; visibility: hidden; transform: translate(-50%, 4px); transition: opacity .12s, transform .12s; pointer-events: none; }
+.tsp-tip:hover::after,
+.tsp-tip:focus::after { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+/* With JS the tip is drawn on the page (.tsp-tipbox), so tables never cut it off. */
+.tsp-js .tsp-tip::after { display: none; }
+.tsp-tipbox { position: fixed; z-index: 100000; max-width: min(300px, calc(100vw - 16px)); padding: 9px 12px; border-radius: 10px; background: var(--tsp-ink); color: #fff; font: 400 12.5px/1.45 -apple-system, "Segoe UI", sans-serif; text-align: left; box-shadow: 0 10px 28px rgb(0 0 0 / 22%); opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity .12s, transform .12s; pointer-events: none; }
+.tsp-tipbox.is-on { opacity: 1; visibility: visible; transform: none; }
+.tsp-tipbox::after { content: ""; position: absolute; left: var(--tsp-arrow, 50%); top: 100%; border: 6px solid transparent; border-top-color: var(--tsp-ink); transform: translateX(-50%); }
+.tsp-tipbox.is-below::after { top: auto; bottom: 100%; border-top-color: transparent; border-bottom-color: var(--tsp-ink); }
+
+/* "You have unsaved changes" bar. */
+.tsp-savebar { position: fixed; z-index: 9990; left: 50%; bottom: 20px; display: flex; align-items: center; gap: 14px; padding: 10px 10px 10px 20px; border-radius: 999px; background: var(--tsp-ink); color: #fff; box-shadow: 0 12px 32px rgb(0 0 0 / 25%); transform: translate(-50%, 140%); transition: transform .2s; }
+.tsp-savebar.is-on { transform: translate(-50%, 0); }
+.tsp-savebar span { font-size: 13.5px; }
+.tsp-savebar .tsp-savebar__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--tsp-lime); }
+.tsp-savebar .button { min-height: 34px; line-height: 32px; }
+.tsp-savebar .button:not(.button-primary) { background: transparent; border-color: #555; color: #fff; }
+
+/* Zip 4 Me already uses this design; give it the 4ME colours. */
+body.tsp-admin .z4m {
+	--z-ink: #151515;
+	--z-ink-2: #4b4f58;
+	--z-ink-3: #7f848d;
+	--z-line: #e6e8e1;
+	--z-line-2: #d5d9cc;
+	--z-bg: #f5f6f1;
+	--z-brand: #151515;
+	--z-brand-600: #000000;
+	--z-brand-50: #f6fcdc;
+	--z-mint: #daf75b;
+	--z-mint-700: #4c6100;
+	--z-mint-50: #f6fcdc;
+}
+
+body.tsp-admin .z4m-logo { display: block; width: 32px; height: 32px; }
+body.tsp-admin .z4m-logo svg { display: block; width: 32px; height: 32px; }
+body.tsp-admin .z4m-hero {
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgb(218 247 91 / 22%) 0%, rgb(218 247 91 / 0%) 55%),
+		radial-gradient(90% 120% at 0% 100%, rgb(218 247 91 / 10%) 0%, rgb(218 247 91 / 0%) 60%),
+		#151515;
+}
+body.tsp-admin .z4m-hero .z4m-btn--primary { border-color: var(--tsp-lime); background: var(--tsp-lime); color: var(--tsp-ink); }
+body.tsp-admin .z4m-hero .z4m-btn--primary:hover { border-color: var(--tsp-lime-600); background: var(--tsp-lime-600); }
+body.tsp-admin .z4m :is(.z4m-tile:has(input:focus-visible), .z4m-chip input:focus-visible + span) { outline-color: rgb(218 247 91 / 70%); }
+body.tsp-admin .z4m-tile:has(input:checked) { background: rgb(218 247 91 / 12%); }
+body.tsp-admin .z4m-row:hover { background: #fbfcf7; }
+body.tsp-admin .z4m-dropveil { background: rgb(246 252 220 / 94%); }
+
+@media (max-width: 782px) {
+	.tsp-intro { margin-right: 10px; }
+	body.tsp-admin .form-table th { width: auto; padding-bottom: 0; }
+	.tsp-savebar { left: 12px; right: 12px; transform: translateY(140%); border-radius: 18px; flex-wrap: wrap; }
+	.tsp-savebar.is-on { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.tsp-savebar, .tsp-tip::after, .tsp-tipbox, body.tsp-admin .form-table input[type="checkbox"]::before { transition: none; }
+}
+
+/* Fields shown only for one choice (data-tsp-when) */
+body.tsp-admin [data-tsp-when][hidden] { display: none !important; }

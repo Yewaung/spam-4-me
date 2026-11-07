@@ -3,7 +3,7 @@
 defined( 'ABSPATH' ) || exit;
 
 function s4m_fluent_fields_html() {
-	echo s4m_hidden_inputs_html();
+	echo s4m_hidden_inputs_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in s4m_hidden_inputs_html().
 }
 add_action( 'fluentform/form_element_start', 's4m_fluent_fields_html' );
 

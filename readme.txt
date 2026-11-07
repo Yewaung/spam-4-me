@@ -1,10 +1,10 @@
 === Spam 4 Me ===
-Contributors: 4me
-Tags: spam, contact form 7, wpforms, gravity forms, ninja forms
+Contributors: thestickpress
+Tags: spam, anti-spam, contact form 7, wpforms, honeypot
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,41 @@ Spam 4 Me stops spam in layers, so real visitors are never asked to solve puzzle
 * Test a Message screen to check what would get through.
 * Privacy: automatic log clean-up and WordPress export/erase tools.
 
+== Installation ==
+
+1. Upload the `spam4me` folder to `/wp-content/plugins/`, or install the ZIP in Plugins > Add New > Upload.
+2. Activate the plugin. It works right away with safe defaults.
+3. See blocked messages in TheStickPress > Spam 4 Me.
+
+== Frequently Asked Questions ==
+
+= A real person was blocked. What do I do? =
+
+Open the entry in the Blocked log and allow the word that blocked it.
+
+= Does it use a CAPTCHA or an outside service? =
+
+No. All checks run on your own server.
+
+== External services ==
+
+None. All checks run on your own server; nothing is sent to other services.
+
 == Changelog ==
+
+= 2.4.0 =
+* Shared TheStickPress look in the dashboard: the same lime and ink colours, cards, switches and buttons as the other 4 Me plugins.
+* Every screen starts with a short card that says what it is for and the steps to follow.
+* "You have unsaved changes" bar with Save and Discard on settings pages, and a warning before leaving with unsaved changes.
+
+= 2.3.1 =
+* New 4ME icon (TheStickPress family) in assets/brand (SVG, 128 and 256 px) and on the TheStickPress overview.
+
+= 2.3.0 =
+* Shared "TheStickPress" admin menu: the settings are now under TheStickPress (old addresses redirect). The blocked log, settings and test page are tabs.
+* Text domain is now "spam4me" (matches the plugin folder, as WordPress.org requires).
+* Tested with Contact Form 7 6.2, Flamingo 2.6 and WP HTML Mail 3.5.
+* Coding standards: translator comments, escaping, documented database access; removed a duplicated default setting.
 
 = 2.2.0 =
 * Support for WPForms, Gravity Forms, Ninja Forms and Fluent Forms: every check, the link message and the locked autoreply subject work on all of them.
@@ -48,3 +82,8 @@ Spam 4 Me stops spam in layers, so real visitors are never asked to solve puzzle
 
 = 1.0.0 =
 * Link, Cyrillic and keyword blocking. Locked autoreply subject.
+
+== Upgrade Notice ==
+
+= 2.4.0 =
+Part of the 4 Me family by TheStickPress. See the changelog for what is new.

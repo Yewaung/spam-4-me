@@ -2,6 +2,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Spam 4 Me's own log table: WordPress has no API for custom tables, the table name is fixed ({$wpdb->prefix}s4m_log) and every value goes through $wpdb->prepare().
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- list filters, search and sorting only read the address bar; they change nothing.
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -20,12 +23,12 @@ class S4M_Log_Table extends WP_List_Table {
 	public function get_columns() {
 		return array(
 			'cb'         => '<input type="checkbox" />',
-			'created_at' => __( 'Date', 'spam-4-me' ),
-			'reason'     => __( 'Why it was blocked', 'spam-4-me' ),
-			'form_title' => __( 'Form', 'spam-4-me' ),
-			'email'      => __( 'Email', 'spam-4-me' ),
-			'ip'         => __( 'IP address', 'spam-4-me' ),
-			'content'    => __( 'Message', 'spam-4-me' ),
+			'created_at' => __( 'Date', 'spam4me' ),
+			'reason'     => __( 'Why it was blocked', 'spam4me' ),
+			'form_title' => __( 'Form', 'spam4me' ),
+			'email'      => __( 'Email', 'spam4me' ),
+			'ip'         => __( 'IP address', 'spam4me' ),
+			'content'    => __( 'Message', 'spam4me' ),
 		);
 	}
 
@@ -39,7 +42,7 @@ class S4M_Log_Table extends WP_List_Table {
 
 	protected function get_bulk_actions() {
 		return array(
-			'delete' => __( 'Delete', 'spam-4-me' ),
+			'delete' => __( 'Delete', 'spam4me' ),
 		);
 	}
 
@@ -49,18 +52,18 @@ class S4M_Log_Table extends WP_List_Table {
 
 	protected function column_created_at( $item ) {
 		$actions = array(
-			'view' => sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::log_url( array( 'view' => $item->id ) ) ), esc_html__( 'View', 'spam-4-me' ) ),
+			'view' => sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::log_url( array( 'view' => $item->id ) ) ), esc_html__( 'View', 'spam4me' ) ),
 		);
 
 		if ( '' !== $item->ip ) {
-			$actions['block_ip'] = sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::action_url( 'block_ip', $item->id ) ), esc_html__( 'Block IP', 'spam-4-me' ) );
+			$actions['block_ip'] = sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::action_url( 'block_ip', $item->id ) ), esc_html__( 'Block IP', 'spam4me' ) );
 		}
 
 		if ( 'keyword' === $item->reason ) {
-			$actions['allow'] = sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::action_url( 'allow_term', $item->id ) ), esc_html__( 'Allow this word', 'spam-4-me' ) );
+			$actions['allow'] = sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::action_url( 'allow_term', $item->id ) ), esc_html__( 'Allow this word', 'spam4me' ) );
 		}
 
-		$actions['delete'] = sprintf( '<a href="%s" class="submitdelete">%s</a>', esc_url( S4M_Admin::action_url( 'delete', $item->id ) ), esc_html__( 'Delete', 'spam-4-me' ) );
+		$actions['delete'] = sprintf( '<a href="%s" class="submitdelete">%s</a>', esc_url( S4M_Admin::action_url( 'delete', $item->id ) ), esc_html__( 'Delete', 'spam4me' ) );
 
 		$date = get_date_from_gmt( $item->created_at, get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) );
 
@@ -97,20 +100,20 @@ class S4M_Log_Table extends WP_List_Table {
 		$current = isset( $_GET['reason'] ) ? sanitize_key( wp_unslash( $_GET['reason'] ) ) : '';
 		?>
 		<div class="alignleft actions">
-			<label class="screen-reader-text" for="s4m-reason-filter"><?php esc_html_e( 'Filter by reason', 'spam-4-me' ); ?></label>
+			<label class="screen-reader-text" for="s4m-reason-filter"><?php esc_html_e( 'Filter by reason', 'spam4me' ); ?></label>
 			<select name="reason" id="s4m-reason-filter">
-				<option value=""><?php esc_html_e( 'All reasons', 'spam-4-me' ); ?></option>
+				<option value=""><?php esc_html_e( 'All reasons', 'spam4me' ); ?></option>
 				<?php foreach ( S4M_Log::reasons() as $key => $reason ) : ?>
 					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $current, $key ); ?>><?php echo esc_html( $reason['label'] ); ?></option>
 				<?php endforeach; ?>
 			</select>
-			<?php submit_button( __( 'Filter', 'spam-4-me' ), '', 'filter_action', false ); ?>
+			<?php submit_button( __( 'Filter', 'spam4me' ), '', 'filter_action', false ); ?>
 		</div>
 		<?php
 	}
 
 	public function no_items() {
-		esc_html_e( 'Nothing has been blocked yet.', 'spam-4-me' );
+		esc_html_e( 'Nothing has been blocked yet.', 'spam4me' );
 	}
 
 	public function prepare_items() {
@@ -144,11 +147,12 @@ class S4M_Log_Table extends WP_List_Table {
 		$where_sql = implode( ' AND ', $where );
 		$offset    = ( $this->get_pagenum() - 1 ) * $per_page;
 
+		// $where_sql holds only fixed fragments with %s placeholders; the values are in $args.
 		$count_sql = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}";
-		$total     = (int) ( $args ? $wpdb->get_var( $wpdb->prepare( $count_sql, $args ) ) : $wpdb->get_var( $count_sql ) );
+		$total     = (int) ( $args ? $wpdb->get_var( $wpdb->prepare( $count_sql, $args ) ) : $wpdb->get_var( $count_sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- see above.
 
 		$this->items = $wpdb->get_results(
-			$wpdb->prepare(
+			$wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- the WHERE placeholders are in $where_sql.
 				"SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$orderby} {$order}, id DESC LIMIT %d OFFSET %d",
 				array_merge( $args, array( $per_page, $offset ) )
 			)

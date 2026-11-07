@@ -18,15 +18,15 @@ function s4m_script_patterns() {
 
 function s4m_script_labels() {
 	return array(
-		'cyrillic'   => __( 'Cyrillic (Russian, Ukrainian …)', 'spam-4-me' ),
-		'han'        => __( 'Chinese characters (also Japanese kanji)', 'spam-4-me' ),
-		'japanese'   => __( 'Japanese kana', 'spam-4-me' ),
-		'hangul'     => __( 'Korean', 'spam-4-me' ),
-		'arabic'     => __( 'Arabic, Persian, Urdu', 'spam-4-me' ),
-		'hebrew'     => __( 'Hebrew', 'spam-4-me' ),
-		'thai'       => __( 'Thai', 'spam-4-me' ),
-		'devanagari' => __( 'Hindi (Devanagari)', 'spam-4-me' ),
-		'greek'      => __( 'Greek', 'spam-4-me' ),
+		'cyrillic'   => __( 'Cyrillic (Russian, Ukrainian …)', 'spam4me' ),
+		'han'        => __( 'Chinese characters (also Japanese kanji)', 'spam4me' ),
+		'japanese'   => __( 'Japanese kana', 'spam4me' ),
+		'hangul'     => __( 'Korean', 'spam4me' ),
+		'arabic'     => __( 'Arabic, Persian, Urdu', 'spam4me' ),
+		'hebrew'     => __( 'Hebrew', 'spam4me' ),
+		'thai'       => __( 'Thai', 'spam4me' ),
+		'devanagari' => __( 'Hindi (Devanagari)', 'spam4me' ),
+		'greek'      => __( 'Greek', 'spam4me' ),
 	);
 }
 
@@ -181,7 +181,7 @@ function s4m_disposable_domain( $email ) {
 	$domains = s4m_disposable_domains();
 	$labels  = explode( '.', strtolower( trim( substr( $email, $at + 1 ) ) ) );
 
-	while ( count( $labels ) > 1 ) {
+	while ( count( $labels ) > 1 ) { // phpcs:ignore Squiz.PHP.DisallowSizeFunctionsInLoops.Found -- the list shrinks on every pass.
 		$domain = implode( '.', $labels );
 
 		if ( isset( $domains[ $domain ] ) ) {
@@ -268,10 +268,28 @@ function s4m_check_content( array $fields, array $emails, $settings, $all = fals
 
 function s4m_cloudflare_ranges() {
 	return array(
-		'173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22', '141.101.64.0/18', '108.162.192.0/18',
-		'190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
-		'104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22',
-		'2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32', '2405:8100::/32', '2a06:98c0::/29', '2c0f:f248::/32',
+		'173.245.48.0/20',
+		'103.21.244.0/22',
+		'103.22.200.0/22',
+		'103.31.4.0/22',
+		'141.101.64.0/18',
+		'108.162.192.0/18',
+		'190.93.240.0/20',
+		'188.114.96.0/20',
+		'197.234.240.0/22',
+		'198.41.128.0/17',
+		'162.158.0.0/15',
+		'104.16.0.0/13',
+		'104.24.0.0/14',
+		'172.64.0.0/13',
+		'131.0.72.0/22',
+		'2400:cb00::/32',
+		'2606:4700::/32',
+		'2803:f800::/32',
+		'2405:b500::/32',
+		'2405:8100::/32',
+		'2a06:98c0::/29',
+		'2c0f:f248::/32',
 	);
 }
 

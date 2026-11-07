@@ -1,0 +1,13 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+
+# Not in "Download ZIP" / release archives.
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.distignore export-ignore
+/README.md export-ignore
+/docs export-ignore
+/developer-notes.html export-ignore
+/.github export-ignore

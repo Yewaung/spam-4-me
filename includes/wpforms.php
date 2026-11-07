@@ -2,8 +2,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- reads WPForms' own submission while WPForms processes it (WPForms checks its nonce); values are only inspected for spam.
+
 function s4m_wpforms_fields_html() {
-	echo s4m_hidden_inputs_html();
+	echo s4m_hidden_inputs_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in s4m_hidden_inputs_html().
 }
 add_action( 'wpforms_display_submit_before', 's4m_wpforms_fields_html' );
 
@@ -137,7 +139,7 @@ function s4m_wpforms_field_error( $id, $message ) {
 	return array( (string) key( $value ) => $message );
 }
 
-function s4m_wpforms_fixed_autoreply_subject( $email, $fields, $entry, $form_data ) {
+function s4m_wpforms_fixed_autoreply_subject( $email, $fields, $entry, $form_data ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WPForms hook signature.
 	$typed = array();
 
 	foreach ( (array) $fields as $field ) {

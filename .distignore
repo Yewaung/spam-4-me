@@ -1,0 +1,13 @@
+# Left out of the WordPress.org package (development files).
+.git
+.gitignore
+.gitattributes
+.distignore
+README.md
+docs
+developer-notes.html
+developer-notes.md
+.wordpress-org
+node_modules
+.github
+build
