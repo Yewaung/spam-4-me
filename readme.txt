@@ -47,6 +47,12 @@ No. All checks run on your own server.
 
 None. All checks run on your own server; nothing is sent to other services.
 
+== Screenshots ==
+
+1. Blocked log: every stopped message with the exact reason.
+2. Settings: each line explains what it stops.
+3. Test a message before visitors do.
+
 == Changelog ==
 
 = 2.4.0 =
