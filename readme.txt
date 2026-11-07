@@ -1,5 +1,5 @@
 === Spam 4 Me ===
-Contributors: thestickpress
+Contributors: yewinaung
 Tags: spam, anti-spam, contact form 7, wpforms, honeypot
 Requires at least: 6.0
 Tested up to: 7.1
