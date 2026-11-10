@@ -1,27 +1,27 @@
 /*
  * TheStickPress admin design: one look for every 4 Me plugin screen.
- * 4ME colours (lime and ink), calm cards, rounded controls, switches,
+ * Hazy colours (ink, teal and mint), calm cards, rounded controls, switches,
  * tooltips and one way to add, remove and save rows. Everything is scoped to
  * body.tsp-admin, which the hub adds to the 4 Me screens only.
  */
 
 body.tsp-admin {
-	--tsp-ink: #151515;
-	--tsp-ink-2: #4b4f58;
-	--tsp-ink-3: #7f848d;
-	--tsp-line: #e6e8e1;
-	--tsp-line-2: #d5d9cc;
-	--tsp-bg: #f5f6f1;
+	--tsp-ink: #192524;
+	--tsp-ink-2: #3C5759;
+	--tsp-ink-3: #56625F;
+	--tsp-line: #DCE0DA;
+	--tsp-line-2: #D0D5CE;
+	--tsp-bg: #EFECE9;
 	--tsp-card: #ffffff;
-	--tsp-lime: #daf75b;
-	--tsp-lime-600: #c3e23d;
-	--tsp-lime-50: #f6fcdc;
-	--tsp-olive: #4c6100;
+	--tsp-lime: #D1EBDB;
+	--tsp-lime-600: #BFE0CC;
+	--tsp-lime-50: #E9F5EE;
+	--tsp-olive: #3C5759;
 	--tsp-danger: #c8323a;
 	--tsp-danger-50: #fdeeee;
 	--tsp-radius: 14px;
 	--tsp-radius-sm: 10px;
-	--tsp-shadow: 0 1px 2px rgb(21 21 21 / 4%), 0 8px 24px rgb(21 21 21 / 6%);
+	--tsp-shadow: 0 1px 2px rgb(25 37 36 / 4%), 0 8px 24px rgb(25 37 36 / 6%);
 	background: var(--tsp-bg);
 }
 
@@ -135,35 +135,35 @@ body.tsp-admin .wp-list-table { border-color: var(--tsp-line); border-radius: va
 .tsp-savebar .button { min-height: 34px; line-height: 32px; }
 .tsp-savebar .button:not(.button-primary) { background: transparent; border-color: #555; color: #fff; }
 
-/* Zip 4 Me already uses this design; give it the 4ME colours. */
+/* Zip 4 Me already uses this design; give it the Hazy colours. */
 body.tsp-admin .z4m {
-	--z-ink: #151515;
-	--z-ink-2: #4b4f58;
-	--z-ink-3: #7f848d;
-	--z-line: #e6e8e1;
-	--z-line-2: #d5d9cc;
-	--z-bg: #f5f6f1;
-	--z-brand: #151515;
-	--z-brand-600: #000000;
-	--z-brand-50: #f6fcdc;
-	--z-mint: #daf75b;
-	--z-mint-700: #4c6100;
-	--z-mint-50: #f6fcdc;
+	--z-ink: #192524;
+	--z-ink-2: #3C5759;
+	--z-ink-3: #56625F;
+	--z-line: #DCE0DA;
+	--z-line-2: #D0D5CE;
+	--z-bg: #EFECE9;
+	--z-brand: #3C5759;
+	--z-brand-600: #2E4446;
+	--z-brand-50: #E9F5EE;
+	--z-mint: #D1EBDB;
+	--z-mint-700: #3C5759;
+	--z-mint-50: #E9F5EE;
 }
 
 body.tsp-admin .z4m-logo { display: block; width: 32px; height: 32px; }
 body.tsp-admin .z4m-logo svg { display: block; width: 32px; height: 32px; }
 body.tsp-admin .z4m-hero {
 	background:
-		radial-gradient(120% 140% at 100% 0%, rgb(218 247 91 / 22%) 0%, rgb(218 247 91 / 0%) 55%),
-		radial-gradient(90% 120% at 0% 100%, rgb(218 247 91 / 10%) 0%, rgb(218 247 91 / 0%) 60%),
-		#151515;
+		radial-gradient(120% 140% at 100% 0%, rgb(209 235 219 / 22%) 0%, rgb(209 235 219 / 0%) 55%),
+		radial-gradient(90% 120% at 0% 100%, rgb(209 235 219 / 10%) 0%, rgb(209 235 219 / 0%) 60%),
+		#192524;
 }
 body.tsp-admin .z4m-hero .z4m-btn--primary { border-color: var(--tsp-lime); background: var(--tsp-lime); color: var(--tsp-ink); }
 body.tsp-admin .z4m-hero .z4m-btn--primary:hover { border-color: var(--tsp-lime-600); background: var(--tsp-lime-600); }
-body.tsp-admin .z4m :is(.z4m-tile:has(input:focus-visible), .z4m-chip input:focus-visible + span) { outline-color: rgb(218 247 91 / 70%); }
-body.tsp-admin .z4m-tile:has(input:checked) { background: rgb(218 247 91 / 12%); }
-body.tsp-admin .z4m-row:hover { background: #fbfcf7; }
+body.tsp-admin .z4m :is(.z4m-tile:has(input:focus-visible), .z4m-chip input:focus-visible + span) { outline-color: rgb(209 235 219 / 70%); }
+body.tsp-admin .z4m-tile:has(input:checked) { background: rgb(209 235 219 / 12%); }
+body.tsp-admin .z4m-row:hover { background: #F6F5F3; }
 body.tsp-admin .z4m-dropveil { background: rgb(246 252 220 / 94%); }
 
 @media (max-width: 782px) {
