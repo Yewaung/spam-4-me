@@ -374,7 +374,7 @@ if ( ! class_exists( 'TheStickPress_Hub_1', false ) ) :
 		 * @return string
 		 */
 		public static function menu_icon() {
-			$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><g fill="black"><path d="M150.9 21.5 39.0 140.9 66.8 167.0 178.8 47.6Z"/><path d="M57.6 183.7 210.1 183.7 210.1 145.6 57.6 145.6Z"/><path d="M155.8 38.5 155.8 217.4 194.0 217.4 194.0 38.5Z"/><path fill-rule="evenodd" d="M144.1 23.8a30.8 30.8 0 1 0 61.6 0a30.8 30.8 0 1 0 -61.6 0ZM160.2 23.8a14.6 14.6 0 1 0 29.3 0a14.6 14.6 0 1 0 -29.3 0Z"/><path fill-rule="evenodd" d="M12.1 164.6a30.8 30.8 0 1 0 61.6 0a30.8 30.8 0 1 0 -61.6 0ZM28.2 164.6a14.6 14.6 0 1 0 29.3 0a14.6 14.6 0 1 0 -29.3 0Z"/><path fill-rule="evenodd" d="M194.0 164.6a30.8 30.8 0 1 0 61.6 0a30.8 30.8 0 1 0 -61.6 0ZM210.1 164.6a14.6 14.6 0 1 0 29.3 0a14.6 14.6 0 1 0 -29.3 0Z"/><path fill-rule="evenodd" d="M144.1 232.1a30.8 30.8 0 1 0 61.6 0a30.8 30.8 0 1 0 -61.6 0ZM160.2 232.1a14.6 14.6 0 1 0 29.3 0a14.6 14.6 0 1 0 -29.3 0Z"/></g></svg>';
+			$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 23 176 176"><g fill="black"><path fill-rule="evenodd" d="M133.37 105.63L137.16 60.78A38 38 0 1 1 178.22 101.84ZM144.12 94.88Q165.67 82.73 188.46 50.54Q156.27 73.33 144.12 94.88Z"/><path fill-rule="evenodd" d="M133.37 116.37L178.22 120.16A38 38 0 1 1 137.16 161.22ZM144.12 127.12Q156.27 148.67 188.46 171.46Q165.67 139.27 144.12 127.12Z"/><path fill-rule="evenodd" d="M122.63 116.37L118.84 161.22A38 38 0 1 1 77.78 120.16ZM111.88 127.12Q90.33 139.27 67.54 171.46Q99.73 148.67 111.88 127.12Z"/><path fill-rule="evenodd" d="M122.63 105.63L77.78 101.84A38 38 0 1 1 118.84 60.78ZM111.88 94.88Q99.73 73.33 67.54 50.54Q90.33 82.73 111.88 94.88Z"/></g></svg>';
 			return 'data:image/svg+xml;base64,' . base64_encode( $svg ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- data URI for the menu icon.
 		}
 
@@ -446,7 +446,7 @@ if ( ! class_exists( 'TheStickPress_Hub_1', false ) ) :
 		}
 
 		/**
-		 * A plugin's icon (its SVG file, or a coloured tile with the hub mark).
+		 * A plugin's icon (its SVG file, or a coloured tile with the four leaf mark).
 		 *
 		 * @param array $plugin Plugin.
 		 * @return string
@@ -457,7 +457,7 @@ if ( ! class_exists( 'TheStickPress_Hub_1', false ) ) :
 				$svg = preg_replace( '/<svg\b/', '<svg aria-hidden="true" focusable="false"', $svg, 1 );
 				return wp_kses( $svg, self::svg_kses() );
 			}
-			return '<svg aria-hidden="true" focusable="false" viewBox="0 0 256 256"><rect width="256" height="256" rx="56" fill="' . esc_attr( $plugin['color'] ) . '"/><path fill="#fff" fill-rule="evenodd" transform="translate(32 32) scale(.75)" d="M51.3 168 116 56V200H96V168ZM76.4 148 96 114V148ZM116 56 164 139.1 212 56V200H192V130.5L164 179.1 116 96Z"/></svg>';
+			return '<svg aria-hidden="true" focusable="false" viewBox="0 0 256 256"><rect width="256" height="256" rx="56" fill="' . esc_attr( $plugin['color'] ) . '"/><g fill="#fff" transform="translate(128 128) scale(.8) translate(-128 -111)"><path fill-rule="evenodd" d="M133.37 105.63L137.16 60.78A38 38 0 1 1 178.22 101.84ZM144.12 94.88Q165.67 82.73 188.46 50.54Q156.27 73.33 144.12 94.88Z"/><path fill-rule="evenodd" d="M133.37 116.37L178.22 120.16A38 38 0 1 1 137.16 161.22ZM144.12 127.12Q156.27 148.67 188.46 171.46Q165.67 139.27 144.12 127.12Z"/><path fill-rule="evenodd" d="M122.63 116.37L118.84 161.22A38 38 0 1 1 77.78 120.16ZM111.88 127.12Q90.33 139.27 67.54 171.46Q99.73 148.67 111.88 127.12Z"/><path fill-rule="evenodd" d="M122.63 105.63L77.78 101.84A38 38 0 1 1 118.84 60.78ZM111.88 94.88Q99.73 73.33 67.54 50.54Q90.33 82.73 111.88 94.88Z"/></g></svg>';
 		}
 
 		/**
