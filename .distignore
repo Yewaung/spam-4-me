@@ -11,3 +11,4 @@ developer-notes.md
 node_modules
 .github
 build
+.claude

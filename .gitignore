@@ -4,6 +4,6 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
-node_modules/
-vendor/
+/node_modules/
+/vendor/
 *.zip
