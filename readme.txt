@@ -1,10 +1,10 @@
 === Spam 4 Me ===
-Contributors: yewinaung
+Contributors: yewaung
 Tags: spam, anti-spam, contact form 7, wpforms, honeypot
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.4.0
+Stable tag: 2.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,9 @@ None. All checks run on your own server; nothing is sent to other services.
 
 == Changelog ==
 
+
+= 2.5.0 =
+* Changed: all code names now start with spam4me_ instead of the short s4m_, so they cannot clash with other plugins (WordPress.org asks for this). Settings and the spam log stay as they are.
 = 2.4.0 =
 * Shared TheStickPress look in the dashboard: the same lime and ink colours, cards, switches and buttons as the other 4 Me plugins.
 * Every screen starts with a short card that says what it is for and the steps to follow.
@@ -91,5 +94,8 @@ None. All checks run on your own server; nothing is sent to other services.
 
 == Upgrade Notice ==
 
+
+= 2.5.0 =
+Code names now use the full spam4me_ prefix. Nothing to do on your side.
 = 2.4.0 =
 Part of the 4 Me family by TheStickPress. See the changelog for what is new.

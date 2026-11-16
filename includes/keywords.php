@@ -2,7 +2,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-function s4m_keyword_lists() {
+function spam4me_keyword_lists() {
 	static $lists = null;
 
 	if ( null !== $lists ) {
@@ -355,7 +355,7 @@ function s4m_keyword_lists() {
 	return $lists;
 }
 
-function s4m_keyword_labels() {
+function spam4me_keyword_labels() {
 	return array(
 		'adult'     => __( 'Adult & porn', 'spam4me' ),
 		'profanity' => __( 'Swear words', 'spam4me' ),
@@ -368,7 +368,7 @@ function s4m_keyword_labels() {
 	);
 }
 
-function s4m_disposable_domains() {
+function spam4me_disposable_domains() {
 	static $domains = null;
 
 	if ( null !== $domains ) {

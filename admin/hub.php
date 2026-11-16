@@ -10,16 +10,16 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Join the TheStickPress admin menu.
  */
-function s4m_hub() {
+function spam4me_hub() {
 	if ( class_exists( 'TheStickPress_Hub_1' ) ) {
 		TheStickPress_Hub_1::register(
 			array(
 				'slug'        => 'spam4me',
 				'name'        => __( 'Spam 4 Me', 'spam4me' ),
-				'version'     => S4M_VERSION,
+				'version'     => SPAM4ME_VERSION,
 				'description' => __( 'Blocks spam in comments and forms (Contact Form 7, WPForms, Gravity Forms, Ninja Forms, Fluent Forms) without captchas.', 'spam4me' ),
 				'color'       => '#e11d48',
-				'icon'        => S4M_DIR . 'assets/icon.svg',
+				'icon'        => SPAM4ME_DIR . 'assets/icon.svg',
 				'pages'       => array( 'spam-4-me', 'spam-4-me-settings', 'spam-4-me-test' ),
 				'screens'     => array(),
 				'help'        => array(
@@ -60,4 +60,4 @@ function s4m_hub() {
 		);
 	}
 }
-add_action( 'init', 's4m_hub' );
+add_action( 'init', 'spam4me_hub' );

@@ -2,20 +2,20 @@
 
 defined( 'ABSPATH' ) || exit;
 
-function s4m_hidden_fields( $fields ) {
-	$fields['_s4m_t']  = s4m_make_token();
+function spam4me_hidden_fields( $fields ) {
+	$fields['_s4m_t']  = spam4me_make_token();
 	$fields['_s4m_js'] = '';
 
 	return $fields;
 }
-add_filter( 'wpcf7_form_hidden_fields', 's4m_hidden_fields' );
+add_filter( 'wpcf7_form_hidden_fields', 'spam4me_hidden_fields' );
 
-function s4m_honeypot_field( $html ) {
-	return $html . s4m_honeypot_html();
+function spam4me_honeypot_field( $html ) {
+	return $html . spam4me_honeypot_html();
 }
-add_filter( 'wpcf7_form_elements', 's4m_honeypot_field' );
+add_filter( 'wpcf7_form_elements', 'spam4me_honeypot_field' );
 
-function s4m_posted_fields( $contact_form ) {
+function spam4me_posted_fields( $contact_form ) {
 	static $cache = array();
 
 	$id = $contact_form->id();
@@ -33,9 +33,9 @@ function s4m_posted_fields( $contact_form ) {
 		}
 
 		if ( 'text' === $tag->basetype || 'textarea' === $tag->basetype ) {
-			$fields[ $tag->name ] = s4m_posted( $tag->name );
+			$fields[ $tag->name ] = spam4me_posted( $tag->name );
 		} elseif ( 'email' === $tag->basetype ) {
-			$emails[ $tag->name ] = s4m_posted( $tag->name );
+			$emails[ $tag->name ] = spam4me_posted( $tag->name );
 		}
 	}
 
@@ -44,10 +44,10 @@ function s4m_posted_fields( $contact_form ) {
 	return $cache[ $id ];
 }
 
-function s4m_log_block( array $hit, $contact_form, array $fields, array $emails ) {
+function spam4me_log_block( array $hit, $contact_form, array $fields, array $emails ) {
 	$submission = WPCF7_Submission::get_instance();
 
-	s4m_log_hit(
+	spam4me_log_hit(
 		$hit,
 		array(
 			'id'    => $contact_form ? $contact_form->id() : 0,
@@ -59,30 +59,30 @@ function s4m_log_block( array $hit, $contact_form, array $fields, array $emails 
 	);
 }
 
-function s4m_validate_links( $result, $tags ) {
-	$settings     = s4m_settings();
+function spam4me_validate_links( $result, $tags ) {
+	$settings     = spam4me_settings();
 	$contact_form = wpcf7_get_current_contact_form();
 
 	if ( ! $settings['block_links'] || ! $contact_form ) {
 		return $result;
 	}
 
-	list( $fields, $emails ) = s4m_posted_fields( $contact_form );
+	list( $fields, $emails ) = spam4me_posted_fields( $contact_form );
 
-	$message = s4m_link_message();
+	$message = spam4me_link_message();
 	$first   = '';
 
 	foreach ( $tags as $tag ) {
 		$classes = method_exists( $tag, 'get_class_option' ) ? (string) $tag->get_class_option() : '';
 
-		if ( isset( $fields[ $tag->name ] ) && s4m_has_link( $fields[ $tag->name ] ) && ! s4m_field_allows_links( '', $tag->name, $classes ) ) {
+		if ( isset( $fields[ $tag->name ] ) && spam4me_has_link( $fields[ $tag->name ] ) && ! spam4me_field_allows_links( '', $tag->name, $classes ) ) {
 			$result->invalidate( $tag, $message );
 			$first = '' === $first ? $tag->name : $first;
 		}
 	}
 
 	if ( '' !== $first ) {
-		s4m_log_block(
+		spam4me_log_block(
 			array(
 				'reason' => 'link',
 				'field'  => $first,
@@ -95,25 +95,25 @@ function s4m_validate_links( $result, $tags ) {
 
 	return $result;
 }
-add_filter( 'wpcf7_validate', 's4m_validate_links', 20, 2 );
+add_filter( 'wpcf7_validate', 'spam4me_validate_links', 20, 2 );
 
-function s4m_check_spam( $spam, $submission ) {
+function spam4me_check_spam( $spam, $submission ) {
 	if ( $spam ) {
 		return $spam;
 	}
 
 	$contact_form = $submission->get_contact_form();
 
-	list( $fields, $emails ) = s4m_posted_fields( $contact_form );
+	list( $fields, $emails ) = spam4me_posted_fields( $contact_form );
 
-	$hit = s4m_check_submission( $fields, $emails );
+	$hit = spam4me_check_submission( $fields, $emails );
 
 	if ( ! $hit ) {
 		return false;
 	}
 
-	$reasons = S4M_Log::reasons();
-	$detail  = S4M_Log::describe( $hit );
+	$reasons = Spam4me_Log::reasons();
+	$detail  = Spam4me_Log::describe( $hit );
 
 	$submission->add_spam_log(
 		array(
@@ -122,19 +122,19 @@ function s4m_check_spam( $spam, $submission ) {
 		)
 	);
 
-	s4m_log_block( $hit, $contact_form, $fields, $emails );
+	spam4me_log_block( $hit, $contact_form, $fields, $emails );
 
 	return true;
 }
-add_filter( 'wpcf7_spam', 's4m_check_spam', 5, 2 );
+add_filter( 'wpcf7_spam', 'spam4me_check_spam', 5, 2 );
 
-function s4m_fixed_autoreply_subject( $components, $form, $mail ) {
+function spam4me_fixed_autoreply_subject( $components, $form, $mail ) {
 	if ( ! is_object( $mail ) || 'mail_2' !== $mail->name() ) {
 		return $components;
 	}
 
-	$components['subject'] = s4m_autoreply_subject();
+	$components['subject'] = spam4me_autoreply_subject();
 
 	return $components;
 }
-add_filter( 'wpcf7_mail_components', 's4m_fixed_autoreply_subject', 20, 3 );
+add_filter( 'wpcf7_mail_components', 'spam4me_fixed_autoreply_subject', 20, 3 );

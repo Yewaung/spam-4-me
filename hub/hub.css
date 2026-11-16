@@ -6,22 +6,22 @@
  */
 
 body.tsp-admin {
-	--tsp-ink: #4A4136;
-	--tsp-ink-2: #6F6452;
-	--tsp-ink-3: #776C5A;
-	--tsp-line: #E4DDCE;
-	--tsp-line-2: #D8D1BF;
-	--tsp-bg: #F6F3EE;
+	--tsp-ink: #1E2235;
+	--tsp-ink-2: #4F566B;
+	--tsp-ink-3: #646B80;
+	--tsp-line: #E2E5F0;
+	--tsp-line-2: #D3D8E8;
+	--tsp-bg: #F5F6FB;
 	--tsp-card: #ffffff;
-	--tsp-lime: #EBCBAE;
-	--tsp-lime-600: #E2B992;
-	--tsp-lime-50: #F4E6D8;
-	--tsp-olive: #8F5126;
+	--tsp-lime: #A8E8FF;
+	--tsp-lime-600: #7CE2FF;
+	--tsp-lime-50: #EEEAFF;
+	--tsp-olive: #5634C9;
 	--tsp-danger: #c8323a;
 	--tsp-danger-50: #fdeeee;
 	--tsp-radius: 14px;
 	--tsp-radius-sm: 10px;
-	--tsp-shadow: 0 1px 2px rgb(74 65 54 / 4%), 0 8px 24px rgb(74 65 54 / 6%);
+	--tsp-shadow: 0 1px 2px rgb(30 34 53 / 4%), 0 8px 24px rgb(30 34 53 / 6%);
 	background: var(--tsp-bg);
 }
 
@@ -137,33 +137,33 @@ body.tsp-admin .wp-list-table { border-color: var(--tsp-line); border-radius: va
 
 /* Zip 4 Me already uses this design; give it the warm colours. */
 body.tsp-admin .z4m {
-	--z-ink: #4A4136;
-	--z-ink-2: #6F6452;
-	--z-ink-3: #776C5A;
-	--z-line: #E4DDCE;
-	--z-line-2: #D8D1BF;
-	--z-bg: #F6F3EE;
-	--z-brand: #A8612F;
-	--z-brand-600: #8F5126;
-	--z-brand-50: #F4E6D8;
-	--z-mint: #EBCBAE;
-	--z-mint-700: #8F5126;
-	--z-mint-50: #F4E6D8;
+	--z-ink: #1E2235;
+	--z-ink-2: #4F566B;
+	--z-ink-3: #646B80;
+	--z-line: #E2E5F0;
+	--z-line-2: #D3D8E8;
+	--z-bg: #F5F6FB;
+	--z-brand: #6D4AE8;
+	--z-brand-600: #5634C9;
+	--z-brand-50: #EEEAFF;
+	--z-mint: #A8E8FF;
+	--z-mint-700: #5634C9;
+	--z-mint-50: #EEEAFF;
 }
 
 body.tsp-admin .z4m-logo { display: block; width: 32px; height: 32px; }
 body.tsp-admin .z4m-logo svg { display: block; width: 32px; height: 32px; }
 body.tsp-admin .z4m-hero {
 	background:
-		radial-gradient(120% 140% at 100% 0%, rgb(205 134 80 / 22%) 0%, rgb(205 134 80 / 0%) 55%),
-		radial-gradient(90% 120% at 0% 100%, rgb(205 134 80 / 10%) 0%, rgb(205 134 80 / 0%) 60%),
-		#284E43;
+		radial-gradient(120% 140% at 100% 0%, rgb(139 108 255 / 22%) 0%, rgb(139 108 255 / 0%) 55%),
+		radial-gradient(90% 120% at 0% 100%, rgb(139 108 255 / 10%) 0%, rgb(139 108 255 / 0%) 60%),
+		#0F1630;
 }
 body.tsp-admin .z4m-hero .z4m-btn--primary { border-color: var(--tsp-lime); background: var(--tsp-lime); color: var(--tsp-ink); }
 body.tsp-admin .z4m-hero .z4m-btn--primary:hover { border-color: var(--tsp-lime-600); background: var(--tsp-lime-600); }
-body.tsp-admin .z4m :is(.z4m-tile:has(input:focus-visible), .z4m-chip input:focus-visible + span) { outline-color: rgb(205 134 80 / 70%); }
-body.tsp-admin .z4m-tile:has(input:checked) { background: rgb(205 134 80 / 12%); }
-body.tsp-admin .z4m-row:hover { background: #FBF8F3; }
+body.tsp-admin .z4m :is(.z4m-tile:has(input:focus-visible), .z4m-chip input:focus-visible + span) { outline-color: rgb(139 108 255 / 70%); }
+body.tsp-admin .z4m-tile:has(input:checked) { background: rgb(139 108 255 / 12%); }
+body.tsp-admin .z4m-row:hover { background: #FAFBFE; }
 body.tsp-admin .z4m-dropveil { background: rgb(246 252 220 / 94%); }
 
 @media (max-width: 782px) {

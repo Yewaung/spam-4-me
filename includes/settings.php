@@ -2,7 +2,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-function s4m_default_settings() {
+function spam4me_default_settings() {
 	return array(
 		'honeypot'          => 1,
 		'require_js'        => 1,
@@ -13,7 +13,7 @@ function s4m_default_settings() {
 		'link_message'      => '',
 		'link_fields'       => "link*\nurl\nwebsite*\nweb site\nhomepage\nportfolio\ngithub\nfacebook\ninstagram\ntwitter\nsocial*",
 		'scripts'           => array( 'cyrillic' ),
-		'categories'        => array_keys( s4m_keyword_lists() ),
+		'categories'        => array_keys( spam4me_keyword_lists() ),
 		'keywords'          => '',
 		'allowlist'         => '',
 		'block_disposable'  => 1,
@@ -23,45 +23,45 @@ function s4m_default_settings() {
 	);
 }
 
-function s4m_settings( $refresh = false ) {
+function spam4me_settings( $refresh = false ) {
 	static $settings = null;
 
 	if ( null === $settings || $refresh ) {
-		$saved = get_option( S4M_OPTION, array() );
+		$saved = get_option( SPAM4ME_OPTION, array() );
 		$saved = is_array( $saved ) ? $saved : array();
 
 		if ( isset( $saved['block_cyrillic'] ) && ! isset( $saved['scripts'] ) ) {
 			$saved['scripts'] = $saved['block_cyrillic'] ? array( 'cyrillic' ) : array();
 		}
 
-		$settings = wp_parse_args( $saved, s4m_default_settings() );
+		$settings = wp_parse_args( $saved, spam4me_default_settings() );
 	}
 
-	return apply_filters( 's4m_settings', $settings );
+	return apply_filters( 'spam4me_settings', $settings );
 }
 
-function s4m_flush_settings() {
-	s4m_settings( true );
+function spam4me_flush_settings() {
+	spam4me_settings( true );
 }
-add_action( 'add_option_' . S4M_OPTION, 's4m_flush_settings' );
-add_action( 'update_option_' . S4M_OPTION, 's4m_flush_settings' );
+add_action( 'add_option_' . SPAM4ME_OPTION, 'spam4me_flush_settings' );
+add_action( 'update_option_' . SPAM4ME_OPTION, 'spam4me_flush_settings' );
 
-function s4m_lower( $text ) {
+function spam4me_lower( $text ) {
 	return function_exists( 'mb_strtolower' ) ? mb_strtolower( (string) $text, 'UTF-8' ) : strtolower( (string) $text );
 }
 
-function s4m_lines( $text ) {
+function spam4me_lines( $text ) {
 	return array_values( array_filter( array_map( 'trim', preg_split( '/\R/', (string) $text ) ), 'strlen' ) );
 }
 
-function s4m_add_setting_line( $key, $line ) {
-	$saved = get_option( S4M_OPTION, array() );
-	$saved = wp_parse_args( is_array( $saved ) ? $saved : array(), s4m_default_settings() );
-	$lines = s4m_lines( $saved[ $key ] );
+function spam4me_add_setting_line( $key, $line ) {
+	$saved = get_option( SPAM4ME_OPTION, array() );
+	$saved = wp_parse_args( is_array( $saved ) ? $saved : array(), spam4me_default_settings() );
+	$lines = spam4me_lines( $saved[ $key ] );
 
-	if ( ! in_array( s4m_lower( $line ), array_map( 's4m_lower', $lines ), true ) ) {
+	if ( ! in_array( spam4me_lower( $line ), array_map( 'spam4me_lower', $lines ), true ) ) {
 		$lines[]       = $line;
 		$saved[ $key ] = implode( "\n", $lines );
-		update_option( S4M_OPTION, $saved );
+		update_option( SPAM4ME_OPTION, $saved );
 	}
 }

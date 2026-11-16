@@ -2,7 +2,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class S4M_Admin {
+class Spam4me_Admin {
 	const CAP = 'manage_options';
 
 	private static $log_hook = '';
@@ -13,7 +13,7 @@ class S4M_Admin {
 		add_action( 'admin_init', array( __CLASS__, 'privacy_policy' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_filter( 'set_screen_option_s4m_logs_per_page', array( __CLASS__, 'save_per_page' ), 10, 3 );
-		add_filter( 'plugin_action_links_' . plugin_basename( S4M_FILE ), array( __CLASS__, 'action_links' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( SPAM4ME_FILE ), array( __CLASS__, 'action_links' ) );
 	}
 
 	public static function menu() {
@@ -41,7 +41,7 @@ class S4M_Admin {
 
 	public static function assets( $hook ) {
 		if ( false !== strpos( $hook, 'spam-4-me' ) ) {
-			wp_enqueue_style( 'spam-4-me-admin', S4M_URL . 'assets/admin.css', array(), S4M_VERSION );
+			wp_enqueue_style( 'spam-4-me-admin', SPAM4ME_URL . 'assets/admin.css', array(), SPAM4ME_VERSION );
 		}
 	}
 
@@ -56,7 +56,7 @@ class S4M_Admin {
 			return;
 		}
 
-		$settings = s4m_settings();
+		$settings = spam4me_settings();
 
 		wp_add_privacy_policy_content(
 			__( 'Spam 4 Me', 'spam4me' ),
@@ -94,12 +94,12 @@ class S4M_Admin {
 
 	public static function reason_badge( $row ) {
 		$row     = (array) $row;
-		$reasons = S4M_Log::reasons();
+		$reasons = Spam4me_Log::reasons();
 		$reason  = isset( $reasons[ $row['reason'] ] ) ? $reasons[ $row['reason'] ] : array(
 			'label' => $row['reason'],
 			'help'  => '',
 		);
-		$detail  = S4M_Log::describe( $row );
+		$detail  = Spam4me_Log::describe( $row );
 		$field   = isset( $row['field'] ) ? (string) $row['field'] : '';
 
 		$html = sprintf( '<span class="s4m-badge s4m-badge--%1$s" title="%2$s">%3$s</span>', esc_attr( $row['reason'] ), esc_attr( $reason['help'] ), esc_html( $reason['label'] ) );
@@ -134,25 +134,25 @@ class S4M_Admin {
 			$op = sanitize_key( wp_unslash( $_GET['s4m_action'] ) );
 			$id = absint( $_GET['id'] );
 			check_admin_referer( 's4m_' . $op . '_' . $id );
-			$row = S4M_Log::get( $id );
+			$row = Spam4me_Log::get( $id );
 
 			if ( $row ) {
 				switch ( $op ) {
 					case 'delete':
-						S4M_Log::delete( array( $id ) );
+						Spam4me_Log::delete( array( $id ) );
 						$notice = 'deleted';
 						break;
 
 					case 'block_ip':
 						if ( '' !== $row->ip ) {
-							s4m_add_setting_line( 'blocked_ips', $row->ip );
+							spam4me_add_setting_line( 'blocked_ips', $row->ip );
 							$notice = 'ip_blocked';
 						}
 						break;
 
 					case 'allow_term':
 						if ( 'keyword' === $row->reason && '' !== $row->detail ) {
-							s4m_add_setting_line( 'allowlist', rtrim( $row->detail, '*' ) );
+							spam4me_add_setting_line( 'allowlist', rtrim( $row->detail, '*' ) );
 							$notice = 'allowed';
 						}
 						break;
@@ -169,13 +169,13 @@ class S4M_Admin {
 
 		if ( 'delete' === $bulk && ! empty( $_REQUEST['ids'] ) ) {
 			check_admin_referer( 'bulk-s4m_logs' );
-			S4M_Log::delete( array_map( 'absint', (array) wp_unslash( $_REQUEST['ids'] ) ) );
+			Spam4me_Log::delete( array_map( 'absint', (array) wp_unslash( $_REQUEST['ids'] ) ) );
 			$notice = 'deleted';
 		}
 
 		if ( isset( $_POST['s4m_clear_log'] ) ) {
 			check_admin_referer( 's4m_clear_log' );
-			S4M_Log::clear();
+			Spam4me_Log::clear();
 			$notice = 'cleared';
 		}
 
@@ -220,14 +220,14 @@ class S4M_Admin {
 			return;
 		}
 
-		require_once S4M_DIR . 'admin/class-s4m-log-table.php';
+		require_once SPAM4ME_DIR . 'admin/class-spam4me-log-table.php';
 
-		$table = new S4M_Log_Table();
+		$table = new Spam4me_Log_Table();
 		$table->prepare_items();
 
-		$summary = S4M_Log::summary();
-		$counts  = S4M_Log::reason_counts();
-		$reasons = S4M_Log::reasons();
+		$summary = Spam4me_Log::summary();
+		$counts  = Spam4me_Log::reason_counts();
+		$reasons = Spam4me_Log::reasons();
 		?>
 		<div class="wrap s4m-wrap">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'Spam 4 Me — Blocked Log', 'spam4me' ); ?></h1>
@@ -275,8 +275,8 @@ class S4M_Admin {
 	}
 
 	private static function render_detail( $id ) {
-		$row     = S4M_Log::get( $id );
-		$reasons = S4M_Log::reasons();
+		$row     = Spam4me_Log::get( $id );
+		$reasons = Spam4me_Log::reasons();
 		?>
 		<div class="wrap s4m-wrap">
 			<h1><?php esc_html_e( 'Blocked message', 'spam4me' ); ?></h1>
@@ -334,12 +334,12 @@ class S4M_Admin {
 
 	public static function register_settings() {
 		register_setting(
-			's4m_settings',
-			S4M_OPTION,
+			'spam4me_settings',
+			SPAM4ME_OPTION,
 			array(
 				'type'              => 'array',
 				'sanitize_callback' => array( __CLASS__, 'sanitize' ),
-				'default'           => s4m_default_settings(),
+				'default'           => spam4me_default_settings(),
 			)
 		);
 	}
@@ -350,8 +350,8 @@ class S4M_Admin {
 		$ips     = array();
 		$invalid = array();
 
-		foreach ( s4m_lines( isset( $input['blocked_ips'] ) ? $input['blocked_ips'] : '' ) as $line ) {
-			if ( s4m_is_valid_range( $line ) ) {
+		foreach ( spam4me_lines( isset( $input['blocked_ips'] ) ? $input['blocked_ips'] : '' ) as $line ) {
+			if ( spam4me_is_valid_range( $line ) ) {
 				$ips[] = $line;
 			} else {
 				$invalid[] = $line;
@@ -360,7 +360,7 @@ class S4M_Admin {
 
 		if ( $invalid ) {
 			add_settings_error(
-				S4M_OPTION,
+				SPAM4ME_OPTION,
 				's4m_invalid_ip',
 				sprintf( /* translators: %s: list of IP entries. */ __( 'These blocked IP entries were not valid and were removed: %s', 'spam4me' ), esc_html( implode( ', ', $invalid ) ) )
 			);
@@ -379,8 +379,8 @@ class S4M_Admin {
 			'block_links'       => empty( $input['block_links'] ) ? 0 : 1,
 			'link_message'      => isset( $input['link_message'] ) ? sanitize_text_field( $input['link_message'] ) : '',
 			'link_fields'       => $text( 'link_fields' ),
-			'scripts'           => array_values( array_intersect( array_keys( s4m_script_patterns() ), isset( $input['scripts'] ) ? (array) $input['scripts'] : array() ) ),
-			'categories'        => array_values( array_intersect( array_keys( s4m_keyword_lists() ), isset( $input['categories'] ) ? (array) $input['categories'] : array() ) ),
+			'scripts'           => array_values( array_intersect( array_keys( spam4me_script_patterns() ), isset( $input['scripts'] ) ? (array) $input['scripts'] : array() ) ),
+			'categories'        => array_values( array_intersect( array_keys( spam4me_keyword_lists() ), isset( $input['categories'] ) ? (array) $input['categories'] : array() ) ),
 			'keywords'          => $text( 'keywords' ),
 			'allowlist'         => $text( 'allowlist' ),
 			'block_disposable'  => empty( $input['block_disposable'] ) ? 0 : 1,
@@ -395,10 +395,10 @@ class S4M_Admin {
 			return;
 		}
 
-		$s     = s4m_settings();
-		$name  = S4M_OPTION;
-		$lists = s4m_keyword_lists();
-		$cats  = s4m_keyword_labels();
+		$s     = spam4me_settings();
+		$name  = SPAM4ME_OPTION;
+		$lists = spam4me_keyword_lists();
+		$cats  = spam4me_keyword_labels();
 
 		$checkbox = function ( $key, $label ) use ( $s, $name ) {
 			printf(
@@ -413,10 +413,10 @@ class S4M_Admin {
 		<div class="wrap s4m-wrap">
 			<h1><?php esc_html_e( 'Spam 4 Me — Settings', 'spam4me' ); ?></h1>
 			<?php self::hub_tabs(); ?>
-			<?php settings_errors( S4M_OPTION ); ?>
+			<?php settings_errors( SPAM4ME_OPTION ); ?>
 
 			<form method="post" action="options.php">
-				<?php settings_fields( 's4m_settings' ); ?>
+				<?php settings_fields( 'spam4me_settings' ); ?>
 
 				<h2><?php esc_html_e( 'Bot protection', 'spam4me' ); ?></h2>
 				<p class="description"><?php esc_html_e( 'Invisible checks. Real visitors never notice them.', 'spam4me' ); ?></p>
@@ -473,7 +473,7 @@ class S4M_Admin {
 						<th scope="row"><?php esc_html_e( 'Block languages', 'spam4me' ); ?></th>
 						<td>
 							<fieldset class="s4m-columns">
-								<?php foreach ( s4m_script_labels() as $key => $label ) : ?>
+								<?php foreach ( spam4me_script_labels() as $key => $label ) : ?>
 									<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[scripts][]" value="<?php echo esc_attr( $key ); ?>" <?php checked( in_array( $key, (array) $s['scripts'], true ) ); ?>> <?php echo esc_html( $label ); ?></label>
 								<?php endforeach; ?>
 							</fieldset>
@@ -567,14 +567,14 @@ class S4M_Admin {
 				$input[ $key ] = isset( $_POST[ $key ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $key ] ) ) : '';
 			}
 
-			$hits = s4m_check_content(
+			$hits = spam4me_check_content(
 				array(
 					'name'    => $input['name'],
 					'subject' => $input['subject'],
 					'message' => $input['message'],
 				),
 				array( 'email' => $input['email'] ),
-				s4m_settings(),
+				spam4me_settings(),
 				true,
 				true
 			);

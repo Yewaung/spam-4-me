@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Spam 4 Me's own log table: WordPress has no API for custom tables, the table name is fixed ({$wpdb->prefix}s4m_log) and every value goes through $wpdb->prepare().
 
-class S4M_Log {
+class Spam4me_Log {
 	const DB_VERSION = '1';
 
 	public static function init() {
@@ -52,7 +52,7 @@ class S4M_Log {
 		);
 
 		update_option( 'spam_4_me_db', self::DB_VERSION );
-		add_option( 's4m_activated', time() );
+		add_option( 'spam4me_activated', time() );
 		delete_option( 'spam_4_me_log' );
 
 		if ( ! wp_next_scheduled( 's4m_daily' ) ) {
@@ -120,13 +120,13 @@ class S4M_Log {
 		$detail = isset( $row['detail'] ) ? (string) $row['detail'] : '';
 
 		if ( 'script' === $row['reason'] ) {
-			$labels = s4m_script_labels();
+			$labels = spam4me_script_labels();
 
 			return isset( $labels[ $detail ] ) ? $labels[ $detail ] : $detail;
 		}
 
 		if ( 'keyword' === $row['reason'] ) {
-			$labels   = s4m_keyword_labels();
+			$labels   = spam4me_keyword_labels();
 			$category = isset( $row['category'] ) ? $row['category'] : '';
 			$detail   = rtrim( $detail, '*' );
 
@@ -215,7 +215,7 @@ class S4M_Log {
 	public static function purge() {
 		global $wpdb;
 
-		$settings = s4m_settings();
+		$settings = spam4me_settings();
 		$table    = self::table();
 		$cutoff   = gmdate( 'Y-m-d H:i:s', time() - max( 1, absint( $settings['retention_days'] ) ) * DAY_IN_SECONDS );
 

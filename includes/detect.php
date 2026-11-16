@@ -2,7 +2,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-function s4m_script_patterns() {
+function spam4me_script_patterns() {
 	return array(
 		'cyrillic'   => '\p{Cyrillic}',
 		'han'        => '\p{Han}',
@@ -16,7 +16,7 @@ function s4m_script_patterns() {
 	);
 }
 
-function s4m_script_labels() {
+function spam4me_script_labels() {
 	return array(
 		'cyrillic'   => __( 'Cyrillic (Russian, Ukrainian …)', 'spam4me' ),
 		'han'        => __( 'Chinese characters (also Japanese kanji)', 'spam4me' ),
@@ -30,7 +30,7 @@ function s4m_script_labels() {
 	);
 }
 
-function s4m_normalize( $text ) {
+function spam4me_normalize( $text ) {
 	$text = wp_check_invalid_utf8( (string) $text, true );
 
 	if ( class_exists( 'Normalizer' ) ) {
@@ -40,10 +40,10 @@ function s4m_normalize( $text ) {
 
 	$text = (string) preg_replace( '/[\x{00AD}\x{200B}-\x{200F}\x{2060}-\x{2064}\x{FEFF}]/u', '', $text );
 
-	return s4m_lower( $text );
+	return spam4me_lower( $text );
 }
 
-function s4m_text_variants( $text ) {
+function spam4me_text_variants( $text ) {
 	$joined = (string) preg_replace_callback(
 		'/(?<![\p{L}\p{N}])(?:\p{L}[\s.\-_*+]){2,}\p{L}(?![\p{L}\p{N}])/u',
 		function ( $m ) {
@@ -69,8 +69,8 @@ function s4m_text_variants( $text ) {
 	return array_values( array_unique( array( $text, $joined, $leet ) ) );
 }
 
-function s4m_term_regex( $term ) {
-	$term = s4m_normalize( trim( $term ) );
+function spam4me_term_regex( $term ) {
+	$term = spam4me_normalize( trim( $term ) );
 
 	if ( '' === $term || '#' === $term[0] ) {
 		return '';
@@ -93,7 +93,7 @@ function s4m_term_regex( $term ) {
 	return '(?<![\p{L}\p{N}])' . $quoted . ( $prefix ? '[\p{L}\p{N}]*' : '' ) . '(?![\p{L}\p{N}])';
 }
 
-function s4m_compiled_rules( $settings ) {
+function spam4me_compiled_rules( $settings ) {
 	static $cache = array();
 
 	$key = md5( wp_json_encode( array( $settings['categories'], $settings['keywords'], $settings['allowlist'] ) ) );
@@ -102,18 +102,18 @@ function s4m_compiled_rules( $settings ) {
 		return $cache[ $key ];
 	}
 
-	$allow_terms = array_map( 's4m_normalize', s4m_lines( $settings['allowlist'] ) );
-	$lists       = array_intersect_key( s4m_keyword_lists(), array_flip( (array) $settings['categories'] ) );
+	$allow_terms = array_map( 'spam4me_normalize', spam4me_lines( $settings['allowlist'] ) );
+	$lists       = array_intersect_key( spam4me_keyword_lists(), array_flip( (array) $settings['categories'] ) );
 
-	$lists['custom'] = s4m_lines( $settings['keywords'] );
+	$lists['custom'] = spam4me_lines( $settings['keywords'] );
 
 	$rules = array();
 
 	foreach ( $lists as $category => $terms ) {
 		foreach ( $terms as $term ) {
-			$regex = s4m_term_regex( $term );
+			$regex = spam4me_term_regex( $term );
 
-			if ( '' !== $regex && ! in_array( s4m_normalize( $term ), $allow_terms, true ) ) {
+			if ( '' !== $regex && ! in_array( spam4me_normalize( $term ), $allow_terms, true ) ) {
 				$rules[] = array(
 					'term'     => $term,
 					'category' => $category,
@@ -125,8 +125,8 @@ function s4m_compiled_rules( $settings ) {
 
 	$allow = array();
 
-	foreach ( s4m_lines( $settings['allowlist'] ) as $phrase ) {
-		$regex = s4m_term_regex( $phrase );
+	foreach ( spam4me_lines( $settings['allowlist'] ) as $phrase ) {
+		$regex = spam4me_term_regex( $phrase );
 
 		if ( '' !== $regex ) {
 			$allow[] = '/' . $regex . '/u';
@@ -141,13 +141,13 @@ function s4m_compiled_rules( $settings ) {
 	return $cache[ $key ];
 }
 
-function s4m_active_terms( $settings ) {
-	$compiled = s4m_compiled_rules( $settings );
+function spam4me_active_terms( $settings ) {
+	$compiled = spam4me_compiled_rules( $settings );
 
 	return $compiled['rules'];
 }
 
-function s4m_match_rules( array $variants, array $compiled, $all ) {
+function spam4me_match_rules( array $variants, array $compiled, $all ) {
 	$matches = array();
 
 	foreach ( $compiled['rules'] as $rule ) {
@@ -167,18 +167,18 @@ function s4m_match_rules( array $variants, array $compiled, $all ) {
 	return $matches;
 }
 
-function s4m_has_link( $text ) {
+function spam4me_has_link( $text ) {
 	return (bool) preg_match( '~https?://|hxxps?://|www\.|\[url|<a\s|[a-z0-9-]+\.[a-z]{2,}/~iu', $text );
 }
 
-function s4m_disposable_domain( $email ) {
+function spam4me_disposable_domain( $email ) {
 	$at = strrpos( $email, '@' );
 
 	if ( false === $at ) {
 		return false;
 	}
 
-	$domains = s4m_disposable_domains();
+	$domains = spam4me_disposable_domains();
 	$labels  = explode( '.', strtolower( trim( substr( $email, $at + 1 ) ) ) );
 
 	while ( count( $labels ) > 1 ) { // phpcs:ignore Squiz.PHP.DisallowSizeFunctionsInLoops.Found -- the list shrinks on every pass.
@@ -194,7 +194,7 @@ function s4m_disposable_domain( $email ) {
 	return false;
 }
 
-function s4m_check_content( array $fields, array $emails, $settings, $all = false, $check_links = false ) {
+function spam4me_check_content( array $fields, array $emails, $settings, $all = false, $check_links = false ) {
 	$hits = array();
 
 	$add = function ( $reason, $detail, $field, $category = '' ) use ( &$hits ) {
@@ -208,7 +208,7 @@ function s4m_check_content( array $fields, array $emails, $settings, $all = fals
 
 	if ( $settings['block_disposable'] ) {
 		foreach ( $emails as $name => $email ) {
-			$domain = s4m_disposable_domain( (string) $email );
+			$domain = spam4me_disposable_domain( (string) $email );
 
 			if ( $domain ) {
 				$add( 'disposable_email', $domain, $name );
@@ -220,8 +220,8 @@ function s4m_check_content( array $fields, array $emails, $settings, $all = fals
 		}
 	}
 
-	$scripts  = array_intersect_key( s4m_script_patterns(), array_flip( (array) $settings['scripts'] ) );
-	$compiled = s4m_compiled_rules( $settings );
+	$scripts  = array_intersect_key( spam4me_script_patterns(), array_flip( (array) $settings['scripts'] ) );
+	$compiled = spam4me_compiled_rules( $settings );
 
 	foreach ( $fields as $name => $value ) {
 		$value = (string) $value;
@@ -230,7 +230,7 @@ function s4m_check_content( array $fields, array $emails, $settings, $all = fals
 			continue;
 		}
 
-		if ( $check_links && $settings['block_links'] && s4m_has_link( $value ) ) {
+		if ( $check_links && $settings['block_links'] && spam4me_has_link( $value ) ) {
 			$add( 'link', '', $name );
 
 			if ( ! $all ) {
@@ -238,7 +238,7 @@ function s4m_check_content( array $fields, array $emails, $settings, $all = fals
 			}
 		}
 
-		$text = s4m_normalize( $value );
+		$text = spam4me_normalize( $value );
 
 		foreach ( $compiled['allow'] as $pattern ) {
 			$text = (string) preg_replace( $pattern, ' ', $text );
@@ -254,7 +254,7 @@ function s4m_check_content( array $fields, array $emails, $settings, $all = fals
 			}
 		}
 
-		foreach ( s4m_match_rules( s4m_text_variants( $text ), $compiled, $all ) as $rule ) {
+		foreach ( spam4me_match_rules( spam4me_text_variants( $text ), $compiled, $all ) as $rule ) {
 			$add( 'keyword', $rule['term'], $name, $rule['category'] );
 
 			if ( ! $all ) {
@@ -266,7 +266,7 @@ function s4m_check_content( array $fields, array $emails, $settings, $all = fals
 	return $hits;
 }
 
-function s4m_cloudflare_ranges() {
+function spam4me_cloudflare_ranges() {
 	return array(
 		'173.245.48.0/20',
 		'103.21.244.0/22',
@@ -293,7 +293,7 @@ function s4m_cloudflare_ranges() {
 	);
 }
 
-function s4m_is_valid_range( $range ) {
+function spam4me_is_valid_range( $range ) {
 	if ( false === strpos( $range, '/' ) ) {
 		return (bool) filter_var( $range, FILTER_VALIDATE_IP );
 	}
@@ -307,10 +307,10 @@ function s4m_is_valid_range( $range ) {
 	return (int) $bits <= ( false === strpos( $subnet, ':' ) ? 32 : 128 );
 }
 
-function s4m_ip_in_range( $ip, $range ) {
+function spam4me_ip_in_range( $ip, $range ) {
 	$range = trim( $range );
 
-	if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) || ! s4m_is_valid_range( $range ) ) {
+	if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) || ! spam4me_is_valid_range( $range ) ) {
 		return false;
 	}
 
@@ -344,9 +344,9 @@ function s4m_ip_in_range( $ip, $range ) {
 	return ( ord( $ip_bin[ $bytes ] ) & $mask ) === ( ord( $subnet_bin[ $bytes ] ) & $mask );
 }
 
-function s4m_ip_match( $ip, array $ranges ) {
+function spam4me_ip_match( $ip, array $ranges ) {
 	foreach ( $ranges as $range ) {
-		if ( s4m_ip_in_range( $ip, $range ) ) {
+		if ( spam4me_ip_in_range( $ip, $range ) ) {
 			return $range;
 		}
 	}
@@ -354,7 +354,7 @@ function s4m_ip_match( $ip, array $ranges ) {
 	return false;
 }
 
-function s4m_client_ip() {
+function spam4me_client_ip() {
 	static $ip = null;
 
 	if ( null !== $ip ) {
@@ -364,9 +364,9 @@ function s4m_client_ip() {
 	$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 	$ip     = filter_var( $remote, FILTER_VALIDATE_IP ) ? $remote : '';
 
-	$proxies = apply_filters( 's4m_trusted_proxies', s4m_cloudflare_ranges() );
+	$proxies = apply_filters( 'spam4me_trusted_proxies', spam4me_cloudflare_ranges() );
 
-	if ( $ip && ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) && s4m_ip_match( $ip, $proxies ) ) {
+	if ( $ip && ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) && spam4me_ip_match( $ip, $proxies ) ) {
 		$real = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
 
 		if ( filter_var( $real, FILTER_VALIDATE_IP ) ) {
@@ -377,13 +377,13 @@ function s4m_client_ip() {
 	return $ip;
 }
 
-function s4m_make_token( $time = null ) {
+function spam4me_make_token( $time = null ) {
 	$time = null === $time ? time() : (int) $time;
 
 	return $time . '.' . substr( wp_hash( 's4m-token|' . $time, 'nonce' ), 0, 20 );
 }
 
-function s4m_token_time( $token ) {
+function spam4me_token_time( $token ) {
 	if ( ! is_string( $token ) || ! preg_match( '/^(\d{9,11})\.([a-f0-9]{20})$/', $token, $m ) ) {
 		return false;
 	}

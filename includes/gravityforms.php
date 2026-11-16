@@ -4,12 +4,12 @@ defined( 'ABSPATH' ) || exit;
 
 // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Gravity Forms field properties (pageNumber, adminLabel, cssClass).
 
-function s4m_gf_form_tag( $form_tag ) {
-	return $form_tag . s4m_hidden_inputs_html();
+function spam4me_gf_form_tag( $form_tag ) {
+	return $form_tag . spam4me_hidden_inputs_html();
 }
-add_filter( 'gform_form_tag', 's4m_gf_form_tag' );
+add_filter( 'gform_form_tag', 'spam4me_gf_form_tag' );
 
-function s4m_gf_posted_fields( $form ) {
+function spam4me_gf_posted_fields( $form ) {
 	$fields  = array();
 	$emails  = array();
 	$objects = array();
@@ -25,12 +25,12 @@ function s4m_gf_posted_fields( $form ) {
 			$parts = array();
 
 			foreach ( $field->inputs as $input ) {
-				$parts[] = s4m_posted( 'input_' . str_replace( '.', '_', $input['id'] ) );
+				$parts[] = spam4me_posted( 'input_' . str_replace( '.', '_', $input['id'] ) );
 			}
 
 			$value = implode( ' ', array_filter( $parts, 'strlen' ) );
 		} else {
-			$value = s4m_posted( 'input_' . $field->id );
+			$value = spam4me_posted( 'input_' . $field->id );
 		}
 
 		$label = '' !== trim( (string) $field->label ) ? trim( $field->label ) : sprintf( 'Field #%s', $field->id );
@@ -48,8 +48,8 @@ function s4m_gf_posted_fields( $form ) {
 	return array( $fields, $emails, $objects );
 }
 
-function s4m_gf_log_block( array $hit, $form, array $fields, array $emails, $url = '' ) {
-	s4m_log_hit(
+function spam4me_gf_log_block( array $hit, $form, array $fields, array $emails, $url = '' ) {
+	spam4me_log_hit(
 		$hit,
 		array(
 			'id'    => isset( $form['id'] ) ? $form['id'] : 0,
@@ -61,30 +61,30 @@ function s4m_gf_log_block( array $hit, $form, array $fields, array $emails, $url
 	);
 }
 
-function s4m_gf_validate_links( $result ) {
-	$settings = s4m_settings();
+function spam4me_gf_validate_links( $result ) {
+	$settings = spam4me_settings();
 	$form     = isset( $result['form'] ) ? $result['form'] : array();
 
 	if ( ! $settings['block_links'] || empty( $form['id'] ) ) {
 		return $result;
 	}
 
-	list( $fields, $emails, $objects ) = s4m_gf_posted_fields( $form );
+	list( $fields, $emails, $objects ) = spam4me_gf_posted_fields( $form );
 
-	$final  = 0 === (int) s4m_posted( 'gform_target_page_number_' . $form['id'] );
-	$source = max( 1, (int) s4m_posted( 'gform_source_page_number_' . $form['id'] ) );
+	$final  = 0 === (int) spam4me_posted( 'gform_target_page_number_' . $form['id'] );
+	$source = max( 1, (int) spam4me_posted( 'gform_source_page_number_' . $form['id'] ) );
 	$first  = '';
 
 	foreach ( $fields as $label => $value ) {
 		$field = $objects[ $label ];
 
-		if ( ( ! $final && (int) $field->pageNumber > 1 && (int) $field->pageNumber !== $source ) || ! s4m_has_link( $value ) || s4m_field_allows_links( $label, isset( $field->adminLabel ) ? (string) $field->adminLabel : '', isset( $field->cssClass ) ? (string) $field->cssClass : '' ) ) {
+		if ( ( ! $final && (int) $field->pageNumber > 1 && (int) $field->pageNumber !== $source ) || ! spam4me_has_link( $value ) || spam4me_field_allows_links( $label, isset( $field->adminLabel ) ? (string) $field->adminLabel : '', isset( $field->cssClass ) ? (string) $field->cssClass : '' ) ) {
 			continue;
 		}
 
 		if ( ! $field->failed_validation ) {
 			$field->failed_validation  = true;
-			$field->validation_message = esc_html( s4m_link_message() );
+			$field->validation_message = esc_html( spam4me_link_message() );
 		}
 
 		if ( '' === $first ) {
@@ -95,7 +95,7 @@ function s4m_gf_validate_links( $result ) {
 	}
 
 	if ( '' !== $first ) {
-		s4m_gf_log_block(
+		spam4me_gf_log_block(
 			array(
 				'reason' => 'link',
 				'field'  => $first,
@@ -110,35 +110,35 @@ function s4m_gf_validate_links( $result ) {
 
 	return $result;
 }
-add_filter( 'gform_validation', 's4m_gf_validate_links', 20 );
+add_filter( 'gform_validation', 'spam4me_gf_validate_links', 20 );
 
-function s4m_gf_check_spam( $is_spam, $form, $entry ) {
+function spam4me_gf_check_spam( $is_spam, $form, $entry ) {
 	if ( $is_spam ) {
 		return $is_spam;
 	}
 
-	list( $fields, $emails ) = s4m_gf_posted_fields( $form );
+	list( $fields, $emails ) = spam4me_gf_posted_fields( $form );
 
-	$hit = s4m_check_submission( $fields, $emails );
+	$hit = spam4me_check_submission( $fields, $emails );
 
 	if ( ! $hit ) {
 		return false;
 	}
 
 	if ( class_exists( 'GFCommon' ) && method_exists( 'GFCommon', 'set_spam_filter' ) ) {
-		$reasons = S4M_Log::reasons();
-		$detail  = S4M_Log::describe( $hit );
+		$reasons = Spam4me_Log::reasons();
+		$detail  = Spam4me_Log::describe( $hit );
 
 		GFCommon::set_spam_filter( rgar( $form, 'id' ), 'Spam 4 Me', $reasons[ $hit['reason'] ]['label'] . ( '' !== $detail ? ': ' . $detail : '' ) );
 	}
 
-	s4m_gf_log_block( $hit, $form, $fields, $emails, isset( $entry['source_url'] ) ? $entry['source_url'] : '' );
+	spam4me_gf_log_block( $hit, $form, $fields, $emails, isset( $entry['source_url'] ) ? $entry['source_url'] : '' );
 
 	return true;
 }
-add_filter( 'gform_entry_is_spam', 's4m_gf_check_spam', 5, 3 );
+add_filter( 'gform_entry_is_spam', 'spam4me_gf_check_spam', 5, 3 );
 
-function s4m_gf_fixed_autoreply_subject( $notification, $form, $entry ) {
+function spam4me_gf_fixed_autoreply_subject( $notification, $form, $entry ) {
 	$typed = array();
 
 	foreach ( isset( $form['fields'] ) ? (array) $form['fields'] : array() as $field ) {
@@ -159,10 +159,10 @@ function s4m_gf_fixed_autoreply_subject( $notification, $form, $entry ) {
 		$to = GFCommon::replace_variables( $to, $form, $entry, false, false, false, 'text' );
 	}
 
-	if ( s4m_sends_to_visitor( $to, $typed ) ) {
-		$notification['subject'] = s4m_autoreply_subject();
+	if ( spam4me_sends_to_visitor( $to, $typed ) ) {
+		$notification['subject'] = spam4me_autoreply_subject();
 	}
 
 	return $notification;
 }
-add_filter( 'gform_notification', 's4m_gf_fixed_autoreply_subject', 20, 3 );
+add_filter( 'gform_notification', 'spam4me_gf_fixed_autoreply_subject', 20, 3 );

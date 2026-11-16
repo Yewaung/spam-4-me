@@ -385,11 +385,14 @@ if ( ! class_exists( 'TheStickPress_Hub_1', false ) ) :
 		 */
 		private static function svg_kses() {
 			$common = array(
-				'fill'      => true,
-				'fill-rule' => true,
-				'clip-rule' => true,
-				'transform' => true,
-				'opacity'   => true,
+				'fill'           => true,
+				'fill-rule'      => true,
+				'clip-rule'      => true,
+				'transform'      => true,
+				'opacity'        => true,
+				'stroke'         => true,
+				'stroke-opacity' => true,
+				'stroke-width'   => true,
 			);
 			return array(
 				'svg'            => array(

@@ -2,12 +2,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-function s4m_fluent_fields_html() {
-	echo s4m_hidden_inputs_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in s4m_hidden_inputs_html().
+function spam4me_fluent_fields_html() {
+	echo spam4me_hidden_inputs_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in s4m_hidden_inputs_html().
 }
-add_action( 'fluentform/form_element_start', 's4m_fluent_fields_html' );
+add_action( 'fluentform/form_element_start', 'spam4me_fluent_fields_html' );
 
-function s4m_fluent_value( array $data, $name ) {
+function spam4me_fluent_value( array $data, $name ) {
 	$path  = preg_split( '/[\[\]]+/', $name, -1, PREG_SPLIT_NO_EMPTY );
 	$value = $data;
 
@@ -22,7 +22,7 @@ function s4m_fluent_value( array $data, $name ) {
 	return $value;
 }
 
-function s4m_fluent_posted_fields( $form_data = null, array $inputs = array() ) {
+function spam4me_fluent_posted_fields( $form_data = null, array $inputs = array() ) {
 	static $last = array( array(), array(), array(), array() );
 
 	if ( null === $form_data ) {
@@ -41,7 +41,7 @@ function s4m_fluent_posted_fields( $form_data = null, array $inputs = array() ) 
 			continue;
 		}
 
-		$value = s4m_fluent_value( (array) $form_data, $name );
+		$value = spam4me_fluent_value( (array) $form_data, $name );
 		$value = is_array( $value ) ? implode( ' ', array_filter( $value, 'is_string' ) ) : $value;
 
 		if ( ! is_string( $value ) ) {
@@ -65,7 +65,7 @@ function s4m_fluent_posted_fields( $form_data = null, array $inputs = array() ) 
 
 		$classes = ( isset( $input['raw']['attributes']['class'] ) ? $input['raw']['attributes']['class'] : '' ) . ' ' . ( isset( $input['raw']['settings']['container_class'] ) ? $input['raw']['settings']['container_class'] : '' );
 
-		if ( s4m_field_allows_links( $label, $name, $classes ) ) {
+		if ( spam4me_field_allows_links( $label, $name, $classes ) ) {
 			$links[ $label ] = true;
 		}
 
@@ -81,8 +81,8 @@ function s4m_fluent_posted_fields( $form_data = null, array $inputs = array() ) 
 	return $last;
 }
 
-function s4m_fluent_log_block( array $hit, $form, array $fields, array $emails ) {
-	s4m_log_hit(
+function spam4me_fluent_log_block( array $hit, $form, array $fields, array $emails ) {
+	spam4me_log_hit(
 		$hit,
 		array(
 			'id'    => isset( $form->id ) ? $form->id : 0,
@@ -94,10 +94,10 @@ function s4m_fluent_log_block( array $hit, $form, array $fields, array $emails )
 	);
 }
 
-function s4m_fluent_validate_links( $errors, $form_data, $form, $inputs ) {
-	list( $fields, $emails, $names, $links ) = s4m_fluent_posted_fields( (array) $form_data, (array) $inputs );
+function spam4me_fluent_validate_links( $errors, $form_data, $form, $inputs ) {
+	list( $fields, $emails, $names, $links ) = spam4me_fluent_posted_fields( (array) $form_data, (array) $inputs );
 
-	$settings = s4m_settings();
+	$settings = spam4me_settings();
 
 	if ( ! $settings['block_links'] ) {
 		return $errors;
@@ -106,28 +106,28 @@ function s4m_fluent_validate_links( $errors, $form_data, $form, $inputs ) {
 	$first = '';
 
 	foreach ( $fields as $label => $value ) {
-		if ( isset( $links[ $label ] ) || ! s4m_has_link( $value ) ) {
+		if ( isset( $links[ $label ] ) || ! spam4me_has_link( $value ) ) {
 			continue;
 		}
 
 		$name  = $names[ $label ];
-		$parts = s4m_fluent_value( (array) $form_data, $name );
+		$parts = spam4me_fluent_value( (array) $form_data, $name );
 
 		if ( is_array( $parts ) ) {
 			foreach ( $parts as $part => $text ) {
-				if ( is_string( $text ) && s4m_has_link( $text ) ) {
+				if ( is_string( $text ) && spam4me_has_link( $text ) ) {
 					$name .= '[' . $part . ']';
 					break;
 				}
 			}
 		}
 
-		$errors[ $name ]['s4m_link'] = esc_html( s4m_link_message() );
+		$errors[ $name ]['s4m_link'] = esc_html( spam4me_link_message() );
 		$first                       = '' === $first ? $label : $first;
 	}
 
 	if ( '' !== $first ) {
-		s4m_fluent_log_block(
+		spam4me_fluent_log_block(
 			array(
 				'reason' => 'link',
 				'field'  => $first,
@@ -140,33 +140,33 @@ function s4m_fluent_validate_links( $errors, $form_data, $form, $inputs ) {
 
 	return $errors;
 }
-add_filter( 'fluentform/validation_errors', 's4m_fluent_validate_links', 20, 4 );
+add_filter( 'fluentform/validation_errors', 'spam4me_fluent_validate_links', 20, 4 );
 
-function s4m_fluent_check_spam( $insert_data, $request_data, $form ) {
-	list( $fields, $emails ) = s4m_fluent_posted_fields();
+function spam4me_fluent_check_spam( $insert_data, $request_data, $form ) {
+	list( $fields, $emails ) = spam4me_fluent_posted_fields();
 
-	$posted = array_intersect_key( (array) $request_data, array_flip( array( '_s4m_t', '_s4m_js', S4M_HONEYPOT ) ) );
+	$posted = array_intersect_key( (array) $request_data, array_flip( array( '_s4m_t', '_s4m_js', SPAM4ME_HONEYPOT ) ) );
 
 	if ( isset( $form->id ) && is_callable( array( '\FluentForm\App\Helpers\Helper', 'isConversionForm' ) ) && \FluentForm\App\Helpers\Helper::isConversionForm( $form->id ) ) {
 		$posted = false;
 	}
 
-	$hit = s4m_check_submission( $fields, $emails, $posted );
+	$hit = spam4me_check_submission( $fields, $emails, $posted );
 
 	if ( $hit ) {
-		s4m_fluent_log_block( $hit, $form, $fields, $emails );
+		spam4me_fluent_log_block( $hit, $form, $fields, $emails );
 
-		wp_send_json( array( 'errors' => esc_html( s4m_block_message() ) ), 422 );
+		wp_send_json( array( 'errors' => esc_html( spam4me_block_message() ) ), 422 );
 	}
 }
-add_action( 'fluentform/before_insert_submission', 's4m_fluent_check_spam', 5, 3 );
+add_action( 'fluentform/before_insert_submission', 'spam4me_fluent_check_spam', 5, 3 );
 
-function s4m_fluent_fixed_autoreply_subject( $subject, $notification, $data ) {
+function spam4me_fluent_fixed_autoreply_subject( $subject, $notification, $data ) {
 	$send_to = isset( $notification['sendTo'] ) ? (array) $notification['sendTo'] : array();
 	$typed   = array_filter( (array) $data, 'is_string' );
 
 	if ( isset( $send_to['type'] ) && 'field' === $send_to['type'] ) {
-		return s4m_autoreply_subject();
+		return spam4me_autoreply_subject();
 	}
 
 	$to = array(
@@ -175,10 +175,10 @@ function s4m_fluent_fixed_autoreply_subject( $subject, $notification, $data ) {
 		isset( $notification['bcc'] ) ? $notification['bcc'] : '',
 	);
 
-	if ( s4m_sends_to_visitor( implode( ',', $to ), $typed ) ) {
-		return s4m_autoreply_subject();
+	if ( spam4me_sends_to_visitor( implode( ',', $to ), $typed ) ) {
+		return spam4me_autoreply_subject();
 	}
 
 	return $subject;
 }
-add_filter( 'fluentform/email_subject', 's4m_fluent_fixed_autoreply_subject', 20, 3 );
+add_filter( 'fluentform/email_subject', 'spam4me_fluent_fixed_autoreply_subject', 20, 3 );

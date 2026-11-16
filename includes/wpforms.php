@@ -4,12 +4,12 @@ defined( 'ABSPATH' ) || exit;
 
 // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- reads WPForms' own submission while WPForms processes it (WPForms checks its nonce); values are only inspected for spam.
 
-function s4m_wpforms_fields_html() {
-	echo s4m_hidden_inputs_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in s4m_hidden_inputs_html().
+function spam4me_wpforms_fields_html() {
+	echo spam4me_hidden_inputs_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in s4m_hidden_inputs_html().
 }
-add_action( 'wpforms_display_submit_before', 's4m_wpforms_fields_html' );
+add_action( 'wpforms_display_submit_before', 'spam4me_wpforms_fields_html' );
 
-function s4m_wpforms_posted_fields( $form_data ) {
+function spam4me_wpforms_posted_fields( $form_data ) {
 	$posted = isset( $_POST['wpforms']['fields'] ) && is_array( $_POST['wpforms']['fields'] ) ? wp_unslash( $_POST['wpforms']['fields'] ) : array();
 	$fields = array();
 	$emails = array();
@@ -41,7 +41,7 @@ function s4m_wpforms_posted_fields( $form_data ) {
 
 		$ids[ $label ] = $id;
 
-		if ( s4m_field_allows_links( $label, '', isset( $field['css'] ) ? $field['css'] : '' ) ) {
+		if ( spam4me_field_allows_links( $label, '', isset( $field['css'] ) ? $field['css'] : '' ) ) {
 			$links[ $label ] = true;
 		}
 
@@ -55,39 +55,39 @@ function s4m_wpforms_posted_fields( $form_data ) {
 	return array( $fields, $emails, $ids, $links );
 }
 
-function s4m_wpforms_log_block( array $hit, $form_data, array $fields, array $emails ) {
-	s4m_log_hit(
+function spam4me_wpforms_log_block( array $hit, $form_data, array $fields, array $emails ) {
+	spam4me_log_hit(
 		$hit,
 		array(
 			'id'    => isset( $form_data['id'] ) ? $form_data['id'] : 0,
 			'title' => isset( $form_data['settings']['form_title'] ) ? $form_data['settings']['form_title'] : '',
-			'url'   => s4m_posted( 'page_url' ),
+			'url'   => spam4me_posted( 'page_url' ),
 		),
 		$fields,
 		$emails
 	);
 }
 
-function s4m_wpforms_check( $errors, $form_data ) {
+function spam4me_wpforms_check( $errors, $form_data ) {
 	if ( empty( $form_data['id'] ) ) {
 		return $errors;
 	}
 
-	$settings = s4m_settings();
+	$settings = spam4me_settings();
 	$form_id  = $form_data['id'];
 
-	list( $fields, $emails, $ids, $links ) = s4m_wpforms_posted_fields( $form_data );
+	list( $fields, $emails, $ids, $links ) = spam4me_wpforms_posted_fields( $form_data );
 
 	if ( $settings['block_links'] ) {
-		$message = esc_html( s4m_link_message() );
+		$message = esc_html( spam4me_link_message() );
 		$first   = '';
 
 		foreach ( $fields as $label => $value ) {
-			if ( ! isset( $links[ $label ] ) && s4m_has_link( $value ) ) {
+			if ( ! isset( $links[ $label ] ) && spam4me_has_link( $value ) ) {
 				$id = $ids[ $label ];
 
 				if ( empty( $errors[ $form_id ][ $id ] ) ) {
-					$errors[ $form_id ][ $id ] = s4m_wpforms_field_error( $id, $message );
+					$errors[ $form_id ][ $id ] = spam4me_wpforms_field_error( $id, $message );
 				}
 
 				$first = '' === $first ? $label : $first;
@@ -95,7 +95,7 @@ function s4m_wpforms_check( $errors, $form_data ) {
 		}
 
 		if ( '' !== $first ) {
-			s4m_wpforms_log_block(
+			spam4me_wpforms_log_block(
 				array(
 					'reason' => 'link',
 					'field'  => $first,
@@ -111,19 +111,19 @@ function s4m_wpforms_check( $errors, $form_data ) {
 		return $errors;
 	}
 
-	$hit = s4m_check_submission( $fields, $emails );
+	$hit = spam4me_check_submission( $fields, $emails );
 
 	if ( $hit ) {
-		s4m_wpforms_log_block( $hit, $form_data, $fields, $emails );
+		spam4me_wpforms_log_block( $hit, $form_data, $fields, $emails );
 
-		$errors[ $form_id ]['header'] = esc_html( s4m_block_message() );
+		$errors[ $form_id ]['header'] = esc_html( spam4me_block_message() );
 	}
 
 	return $errors;
 }
-add_filter( 'wpforms_process_initial_errors', 's4m_wpforms_check', 20, 2 );
+add_filter( 'wpforms_process_initial_errors', 'spam4me_wpforms_check', 20, 2 );
 
-function s4m_wpforms_field_error( $id, $message ) {
+function spam4me_wpforms_field_error( $id, $message ) {
 	$value = isset( $_POST['wpforms']['fields'][ $id ] ) ? wp_unslash( $_POST['wpforms']['fields'][ $id ] ) : '';
 
 	if ( ! is_array( $value ) ) {
@@ -131,7 +131,7 @@ function s4m_wpforms_field_error( $id, $message ) {
 	}
 
 	foreach ( $value as $part => $text ) {
-		if ( is_string( $text ) && s4m_has_link( $text ) ) {
+		if ( is_string( $text ) && spam4me_has_link( $text ) ) {
 			return array( $part => $message );
 		}
 	}
@@ -139,7 +139,7 @@ function s4m_wpforms_field_error( $id, $message ) {
 	return array( (string) key( $value ) => $message );
 }
 
-function s4m_wpforms_fixed_autoreply_subject( $email, $fields, $entry, $form_data ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WPForms hook signature.
+function spam4me_wpforms_fixed_autoreply_subject( $email, $fields, $entry, $form_data ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WPForms hook signature.
 	$typed = array();
 
 	foreach ( (array) $fields as $field ) {
@@ -153,10 +153,10 @@ function s4m_wpforms_fixed_autoreply_subject( $email, $fields, $entry, $form_dat
 		isset( $email['carboncopy'] ) ? (array) $email['carboncopy'] : array()
 	);
 
-	if ( s4m_sends_to_visitor( $to, $typed ) ) {
-		$email['subject'] = s4m_autoreply_subject();
+	if ( spam4me_sends_to_visitor( $to, $typed ) ) {
+		$email['subject'] = spam4me_autoreply_subject();
 	}
 
 	return $email;
 }
-add_filter( 'wpforms_entry_email_atts', 's4m_wpforms_fixed_autoreply_subject', 20, 4 );
+add_filter( 'wpforms_entry_email_atts', 'spam4me_wpforms_fixed_autoreply_subject', 20, 4 );

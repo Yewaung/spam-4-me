@@ -2,11 +2,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'S4M_HONEYPOT', 's4m_website' );
-define( 'S4M_CACHE_GRACE', 2 * DAY_IN_SECONDS );
+define( 'SPAM4ME_HONEYPOT', 's4m_website' );
+define( 'SPAM4ME_CACHE_GRACE', 2 * DAY_IN_SECONDS );
 
-function s4m_honeypot_html() {
-	$settings = s4m_settings();
+function spam4me_honeypot_html() {
+	$settings = spam4me_settings();
 
 	if ( ! $settings['honeypot'] ) {
 		return '';
@@ -15,26 +15,26 @@ function s4m_honeypot_html() {
 	return sprintf(
 		'<span class="s4m-field" aria-hidden="true" style="position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden"><label>%1$s <input type="text" name="%2$s" value="" tabindex="-1" autocomplete="off"></label></span>',
 		esc_html__( 'Leave this field empty', 'spam4me' ),
-		esc_attr( S4M_HONEYPOT )
+		esc_attr( SPAM4ME_HONEYPOT )
 	);
 }
 
-function s4m_hidden_inputs_html() {
+function spam4me_hidden_inputs_html() {
 	return sprintf(
 		'<input type="hidden" name="_s4m_t" value="%s"><input type="hidden" name="_s4m_js" value="">',
-		esc_attr( s4m_make_token() )
-	) . s4m_honeypot_html();
+		esc_attr( spam4me_make_token() )
+	) . spam4me_honeypot_html();
 }
 
-function s4m_enqueue_script() {
-	$settings = s4m_settings();
+function spam4me_enqueue_script() {
+	$settings = spam4me_settings();
 
 	if ( $settings['require_js'] ) {
 		wp_enqueue_script(
 			'spam-4-me',
-			S4M_URL . 'assets/s4m.js',
+			SPAM4ME_URL . 'assets/s4m.js',
 			array(),
-			S4M_VERSION,
+			SPAM4ME_VERSION,
 			array(
 				'in_footer' => true,
 				'strategy'  => 'defer',
@@ -42,9 +42,9 @@ function s4m_enqueue_script() {
 		);
 	}
 }
-add_action( 'wp_enqueue_scripts', 's4m_enqueue_script' );
+add_action( 'wp_enqueue_scripts', 'spam4me_enqueue_script' );
 
-function s4m_posted( $name ) {
+function spam4me_posted( $name ) {
 	// Reads a field of another plugin's form while that plugin processes it (the form plugin checks its own nonce);
 	// the value is only inspected for spam, never saved or printed as is.
 	$value = isset( $_POST[ $name ] ) ? wp_unslash( $_POST[ $name ] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -52,19 +52,19 @@ function s4m_posted( $name ) {
 	return is_string( $value ) ? $value : '';
 }
 
-function s4m_check_request( $settings, $posted = null ) {
+function spam4me_check_request( $settings, $posted = null ) {
 	$read = function ( $name ) use ( $posted ) {
 		if ( null === $posted ) {
-			return s4m_posted( $name );
+			return spam4me_posted( $name );
 		}
 
 		return isset( $posted[ $name ] ) && is_string( $posted[ $name ] ) ? $posted[ $name ] : '';
 	};
 
-	$ip = s4m_client_ip();
+	$ip = spam4me_client_ip();
 
 	if ( $ip ) {
-		$range = s4m_ip_match( $ip, s4m_lines( $settings['blocked_ips'] ) );
+		$range = spam4me_ip_match( $ip, spam4me_lines( $settings['blocked_ips'] ) );
 
 		if ( $range ) {
 			return array(
@@ -75,10 +75,10 @@ function s4m_check_request( $settings, $posted = null ) {
 	}
 
 	if ( false === $posted ) {
-		return s4m_check_rate_limit( $settings, $ip );
+		return spam4me_check_rate_limit( $settings, $ip );
 	}
 
-	$trap = $read( S4M_HONEYPOT );
+	$trap = $read( SPAM4ME_HONEYPOT );
 
 	if ( $settings['honeypot'] && '' !== trim( $trap ) ) {
 		return array(
@@ -88,8 +88,8 @@ function s4m_check_request( $settings, $posted = null ) {
 	}
 
 	$token     = $read( '_s4m_t' );
-	$time      = s4m_token_time( $token );
-	$pre_cache = '' === $token && time() - (int) get_option( 's4m_activated', 0 ) < S4M_CACHE_GRACE;
+	$time      = spam4me_token_time( $token );
+	$pre_cache = '' === $token && time() - (int) get_option( 'spam4me_activated', 0 ) < SPAM4ME_CACHE_GRACE;
 
 	if ( $settings['require_js'] && ! $pre_cache && ( false === $time || ! hash_equals( $token, $read( '_s4m_js' ) ) ) ) {
 		return array(
@@ -109,11 +109,11 @@ function s4m_check_request( $settings, $posted = null ) {
 		}
 	}
 
-	return s4m_check_rate_limit( $settings, $ip );
+	return spam4me_check_rate_limit( $settings, $ip );
 }
 
-function s4m_check_rate_limit( $settings, $ip ) {
-	if ( $settings['rate_limit'] > 0 && $ip && ! s4m_ip_match( $ip, s4m_cloudflare_ranges() ) ) {
+function spam4me_check_rate_limit( $settings, $ip ) {
+	if ( $settings['rate_limit'] > 0 && $ip && ! spam4me_ip_match( $ip, spam4me_cloudflare_ranges() ) ) {
 		$key   = 's4m_rl_' . md5( $ip );
 		$count = (int) get_transient( $key ) + 1;
 
@@ -130,20 +130,20 @@ function s4m_check_rate_limit( $settings, $ip ) {
 	return null;
 }
 
-function s4m_check_submission( array $fields, array $emails, $posted = null ) {
-	$settings = s4m_settings();
-	$hit      = s4m_check_request( $settings, $posted );
+function spam4me_check_submission( array $fields, array $emails, $posted = null ) {
+	$settings = spam4me_settings();
+	$hit      = spam4me_check_request( $settings, $posted );
 
 	if ( ! $hit ) {
-		$hits = s4m_check_content( $fields, $emails, $settings );
+		$hits = spam4me_check_content( $fields, $emails, $settings );
 		$hit  = $hits ? $hits[0] : null;
 	}
 
 	return $hit;
 }
 
-function s4m_log_hit( array $hit, array $form, array $fields, array $emails ) {
-	$settings = s4m_settings();
+function spam4me_log_hit( array $hit, array $form, array $fields, array $emails ) {
+	$settings = spam4me_settings();
 	$content  = null;
 
 	if ( $settings['store_content'] ) {
@@ -158,7 +158,7 @@ function s4m_log_hit( array $hit, array $form, array $fields, array $emails ) {
 		);
 	}
 
-	S4M_Log::add(
+	Spam4me_Log::add(
 		array(
 			'form_id'    => isset( $form['id'] ) ? $form['id'] : 0,
 			'form_title' => isset( $form['title'] ) ? $form['title'] : '',
@@ -166,7 +166,7 @@ function s4m_log_hit( array $hit, array $form, array $fields, array $emails ) {
 			'detail'     => isset( $hit['detail'] ) ? $hit['detail'] : '',
 			'category'   => isset( $hit['category'] ) ? $hit['category'] : '',
 			'field'      => isset( $hit['field'] ) ? $hit['field'] : '',
-			'ip'         => s4m_client_ip(),
+			'ip'         => spam4me_client_ip(),
 			'email'      => $emails ? sanitize_email( reset( $emails ) ) : '',
 			'user_agent' => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '',
 			'page_url'   => isset( $form['url'] ) ? esc_url_raw( (string) $form['url'] ) : '',
@@ -175,8 +175,8 @@ function s4m_log_hit( array $hit, array $form, array $fields, array $emails ) {
 	);
 }
 
-function s4m_autoreply_subject() {
-	$settings = s4m_settings();
+function spam4me_autoreply_subject() {
+	$settings = spam4me_settings();
 	$subject  = trim( $settings['autoreply_subject'] );
 
 	if ( '' === $subject ) {
@@ -186,17 +186,17 @@ function s4m_autoreply_subject() {
 	return $subject;
 }
 
-function s4m_link_message() {
-	$settings = s4m_settings();
+function spam4me_link_message() {
+	$settings = spam4me_settings();
 
 	return '' !== trim( $settings['link_message'] ) ? $settings['link_message'] : __( 'Links are not allowed in this field.', 'spam4me' );
 }
 
-function s4m_block_message() {
+function spam4me_block_message() {
 	return __( 'There was an error trying to send your message. Please try again later.', 'spam4me' );
 }
 
-function s4m_sends_to_visitor( $recipients, array $typed ) {
+function spam4me_sends_to_visitor( $recipients, array $typed ) {
 	$recipients = is_array( $recipients ) ? $recipients : explode( ',', (string) $recipients );
 	$recipients = array_filter( array_map( 'strtolower', array_map( 'trim', $recipients ) ) );
 	$typed      = array_filter( array_map( 'strtolower', array_map( 'trim', array_filter( $typed, 'is_string' ) ) ) );
@@ -204,21 +204,21 @@ function s4m_sends_to_visitor( $recipients, array $typed ) {
 	return (bool) array_intersect( $recipients, $typed );
 }
 
-function s4m_field_allows_links( $label, $name = '', $classes = '' ) {
+function spam4me_field_allows_links( $label, $name = '', $classes = '' ) {
 	if ( preg_match( '/(?:^|\s)s4m-allow-links(?:\s|$)/', (string) $classes ) ) {
 		return true;
 	}
 
 	static $cache = array();
 
-	$settings = s4m_settings();
+	$settings = spam4me_settings();
 	$key      = md5( (string) $settings['link_fields'] );
 
 	if ( ! isset( $cache[ $key ] ) ) {
 		$cache[ $key ] = array();
 
-		foreach ( s4m_lines( $settings['link_fields'] ) as $term ) {
-			$regex = s4m_term_regex( $term );
+		foreach ( spam4me_lines( $settings['link_fields'] ) as $term ) {
+			$regex = spam4me_term_regex( $term );
 
 			if ( '' !== $regex ) {
 				$cache[ $key ][] = '/' . $regex . '/u';
@@ -226,7 +226,7 @@ function s4m_field_allows_links( $label, $name = '', $classes = '' ) {
 		}
 	}
 
-	$text = s4m_normalize( $label . ' ' . $name );
+	$text = spam4me_normalize( $label . ' ' . $name );
 
 	foreach ( $cache[ $key ] as $pattern ) {
 		if ( preg_match( $pattern, $text ) ) {

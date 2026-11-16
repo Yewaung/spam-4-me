@@ -9,7 +9,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class S4M_Log_Table extends WP_List_Table {
+class Spam4me_Log_Table extends WP_List_Table {
 	public function __construct() {
 		parent::__construct(
 			array(
@@ -52,26 +52,26 @@ class S4M_Log_Table extends WP_List_Table {
 
 	protected function column_created_at( $item ) {
 		$actions = array(
-			'view' => sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::log_url( array( 'view' => $item->id ) ) ), esc_html__( 'View', 'spam4me' ) ),
+			'view' => sprintf( '<a href="%s">%s</a>', esc_url( Spam4me_Admin::log_url( array( 'view' => $item->id ) ) ), esc_html__( 'View', 'spam4me' ) ),
 		);
 
 		if ( '' !== $item->ip ) {
-			$actions['block_ip'] = sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::action_url( 'block_ip', $item->id ) ), esc_html__( 'Block IP', 'spam4me' ) );
+			$actions['block_ip'] = sprintf( '<a href="%s">%s</a>', esc_url( Spam4me_Admin::action_url( 'block_ip', $item->id ) ), esc_html__( 'Block IP', 'spam4me' ) );
 		}
 
 		if ( 'keyword' === $item->reason ) {
-			$actions['allow'] = sprintf( '<a href="%s">%s</a>', esc_url( S4M_Admin::action_url( 'allow_term', $item->id ) ), esc_html__( 'Allow this word', 'spam4me' ) );
+			$actions['allow'] = sprintf( '<a href="%s">%s</a>', esc_url( Spam4me_Admin::action_url( 'allow_term', $item->id ) ), esc_html__( 'Allow this word', 'spam4me' ) );
 		}
 
-		$actions['delete'] = sprintf( '<a href="%s" class="submitdelete">%s</a>', esc_url( S4M_Admin::action_url( 'delete', $item->id ) ), esc_html__( 'Delete', 'spam4me' ) );
+		$actions['delete'] = sprintf( '<a href="%s" class="submitdelete">%s</a>', esc_url( Spam4me_Admin::action_url( 'delete', $item->id ) ), esc_html__( 'Delete', 'spam4me' ) );
 
 		$date = get_date_from_gmt( $item->created_at, get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) );
 
-		return sprintf( '<a href="%s"><strong>%s</strong></a>', esc_url( S4M_Admin::log_url( array( 'view' => $item->id ) ) ), esc_html( $date ) ) . $this->row_actions( $actions );
+		return sprintf( '<a href="%s"><strong>%s</strong></a>', esc_url( Spam4me_Admin::log_url( array( 'view' => $item->id ) ) ), esc_html( $date ) ) . $this->row_actions( $actions );
 	}
 
 	protected function column_reason( $item ) {
-		return S4M_Admin::reason_badge( $item );
+		return Spam4me_Admin::reason_badge( $item );
 	}
 
 	protected function column_content( $item ) {
@@ -103,7 +103,7 @@ class S4M_Log_Table extends WP_List_Table {
 			<label class="screen-reader-text" for="s4m-reason-filter"><?php esc_html_e( 'Filter by reason', 'spam4me' ); ?></label>
 			<select name="reason" id="s4m-reason-filter">
 				<option value=""><?php esc_html_e( 'All reasons', 'spam4me' ); ?></option>
-				<?php foreach ( S4M_Log::reasons() as $key => $reason ) : ?>
+				<?php foreach ( Spam4me_Log::reasons() as $key => $reason ) : ?>
 					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $current, $key ); ?>><?php echo esc_html( $reason['label'] ); ?></option>
 				<?php endforeach; ?>
 			</select>
@@ -119,7 +119,7 @@ class S4M_Log_Table extends WP_List_Table {
 	public function prepare_items() {
 		global $wpdb;
 
-		$table    = S4M_Log::table();
+		$table    = Spam4me_Log::table();
 		$per_page = $this->get_items_per_page( 's4m_logs_per_page', 20 );
 		$where    = array( '1=1' );
 		$args     = array();
