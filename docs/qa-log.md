@@ -2,6 +2,22 @@
 
 Newest first. One entry per QA check or push.
 
+## 2026-11-18: QA check and push (no release)
+
+- .claude left out of release archives (`.gitattributes`); no plugin code changed.
+- Checks: PHP lint and JS syntax pass, PHPCS WordPress-Extra clean, Plugin Check no code issues (only the shared kit names and dev files kept out of the zip). Smoke: all product pages 200, made up URL 404.
+- Pushed without a tag.
+
+## 2026-11-18: release archives leave out .claude (not pushed)
+
+- Plugin Check on the development folder flags .gitattributes, .gitignore, .distignore, .github and .claude. The release zip (workflow and the copy on thestickpress.com) already leaves all of them out through .distignore: checked, 0 hidden files, and Plugin Check on the extracted zip has no error.
+- Gap found: .gitattributes had no export-ignore for .claude, so GitHub's "Download ZIP" and release source archives still carried it. Added `/.claude export-ignore`; git archive now has 0 hidden entries.
+
+## 2026-11-16: QA check (all TheStickPress plugins and themes)
+
+- QA check: PHP lint pass (PHP 8.5.12), JS syntax pass, PHPCS WordPress-Extra 0 errors and 0 warnings, WordPress Plugin Check only flags dev files (.gitattributes, .gitignore, .distignore, .github, .claude) that .distignore keeps out of the release zip.
+- Runtime: every public page 200, made up URL 404, debug log on for the run: no notices from this plugin. Versions: WordPress 7.1.4 (latest, above the floor), Elementor 4.4.0 (above the 4.3.6 XSS floor). No working tree changes, nothing pushed.
+
 ## 2026-11-16: WordPress.org readiness, version 2.5.0 (not pushed yet)
 
 - Owner's request: own code only, compatible with WordPress, PHP and other plugins, ready for WordPress.org. Contributor set to yewaung.

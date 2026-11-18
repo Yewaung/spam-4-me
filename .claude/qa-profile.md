@@ -1,6 +1,6 @@
 # QA profile: Spam 4 Me
 
-Last refreshed: 2026-11-15
+Last refreshed: 2026-11-16
 
 Part of the 4 Me project by TheStickPress. Form spam filtering for several form plugins, rate limits, blocked log.
 
