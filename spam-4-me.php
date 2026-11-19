@@ -3,7 +3,7 @@
  * Plugin Name: Spam 4 Me
  * Plugin URI: https://www.thestickpress.com/plugins/spam4me/
  * Description: Spam protection for Contact Form 7, WPForms, Gravity Forms, Ninja Forms and Fluent Forms: invisible bot checks, banned words in many languages, link and language blocking, a locked autoreply subject, and a log that shows exactly why each message was blocked.
- * Version: 2.5.0
+ * Version: 2.5.1
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: TheStickPress
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SPAM4ME_VERSION', '2.5.0' );
+define( 'SPAM4ME_VERSION', '2.5.1' );
 define( 'SPAM4ME_FILE', __FILE__ );
 define( 'SPAM4ME_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SPAM4ME_URL', plugin_dir_url( __FILE__ ) );
@@ -49,6 +49,7 @@ spam4me_move_old_options();
 
 require_once SPAM4ME_DIR . 'includes/keywords.php';
 require_once SPAM4ME_DIR . 'includes/settings.php';
+require_once SPAM4ME_DIR . 'includes/class-thestickpress-client-ip-1.php';
 require_once SPAM4ME_DIR . 'includes/detect.php';
 require_once SPAM4ME_DIR . 'includes/class-spam4me-log.php';
 require_once SPAM4ME_DIR . 'includes/forms.php';

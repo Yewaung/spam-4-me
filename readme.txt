@@ -4,7 +4,7 @@ Tags: spam, anti-spam, contact form 7, wpforms, honeypot
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,8 @@ None. All checks run on your own server; nothing is sent to other services.
 
 == Changelog ==
 
+= 2.5.1 =
+* Changed: the visitor address now comes from the same shared rule as the other 4 Me plugins, so Spam 4 Me, Form 4 Me, Map 4 Me and Tune 4 Me always agree on who the visitor is. Your spam4me_trusted_proxies filter keeps working and now applies to all of them.
 
 = 2.5.0 =
 * Changed: all code names now start with spam4me_ instead of the short s4m_, so they cannot clash with other plugins (WordPress.org asks for this). Settings and the spam log stay as they are.
@@ -94,6 +96,8 @@ None. All checks run on your own server; nothing is sent to other services.
 
 == Upgrade Notice ==
 
+= 2.5.1 =
+Spam 4 Me and the other 4 Me plugins now agree on the visitor address behind Cloudflare and other proxies.
 
 = 2.5.0 =
 Code names now use the full spam4me_ prefix. Nothing to do on your side.

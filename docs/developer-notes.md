@@ -101,7 +101,7 @@ After activation (`s4m_activated` option), a submission with **no** token is acc
 It is named `s4m_website`, without a leading underscore, because some bots skip underscore-prefixed (CF7-internal) fields. It has `tabindex="-1"`, `autocomplete="off"` and `aria-hidden`, and is positioned off-screen with an inline style so it works even if CSS is optimised away.
 
 ### Real IP behind Cloudflare
-On this server, `REMOTE_ADDR` is a Cloudflare edge IP. `s4m_client_ip()` trusts `CF-Connecting-IP` **only** when `REMOTE_ADDR` is inside the Cloudflare ranges, so the header can't be forged by a client connecting directly to the origin. Ranges come from https://www.cloudflare.com/ips/ (checked 2026-10-21). Filter: `s4m_trusted_proxies`.
+On this server, `REMOTE_ADDR` is a Cloudflare edge IP. `spam4me_client_ip()` returns `TheStickPress_Client_IP_1::get()` (shared with Form 4 Me, Map 4 Me and Tune 4 Me, file `includes/class-thestickpress-client-ip-1.php`, identical in each). It trusts the proxy header **only** when `REMOTE_ADDR` is a trusted proxy, and for a list header it takes the rightmost address that is not a trusted proxy, so the header cannot be forged by a client connecting directly to the origin. Cloudflare ranges checked against https://www.cloudflare.com/ips-v4 and ips-v6 on 2026-11-19. Filters: `thestickpress_trusted_proxies`, `thestickpress_client_ip_header`; the older `spam4me_trusted_proxies` still works and feeds the shared filter.
 
 ### Rate limit
 A transient per IP (`s4m_rl_{md5(ip)}`), reset to one hour on each hit. It is skipped when the resolved IP is still a Cloudflare IP (header missing), otherwise every visitor would share one counter.
@@ -119,7 +119,7 @@ A transient per IP (`s4m_rl_{md5(ip)}`), reset to one hour on each hit. It is sk
 | Filter | Use |
 |---|---|
 | `s4m_settings` | Override settings in code (used by the test harness) |
-| `s4m_trusted_proxies` | Change which proxy ranges may supply `CF-Connecting-IP` |
+| `spam4me_trusted_proxies` (or `thestickpress_trusted_proxies`) | Change which proxy ranges may supply the visitor header (all 4 Me plugins) |
 
 ## Security checklist
 

@@ -354,28 +354,25 @@ function spam4me_ip_match( $ip, array $ranges ) {
 	return false;
 }
 
+/**
+ * The visitor's IP: the shared TheStickPress rule, so every 4 Me plugin sees
+ * the same visitor (Cloudflare by default, other proxies by filter).
+ */
 function spam4me_client_ip() {
-	static $ip = null;
-
-	if ( null !== $ip ) {
-		return $ip;
-	}
-
-	$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-	$ip     = filter_var( $remote, FILTER_VALIDATE_IP ) ? $remote : '';
-
-	$proxies = apply_filters( 'spam4me_trusted_proxies', spam4me_cloudflare_ranges() );
-
-	if ( $ip && ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) && spam4me_ip_match( $ip, $proxies ) ) {
-		$real = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
-
-		if ( filter_var( $real, FILTER_VALIDATE_IP ) ) {
-			$ip = $real;
-		}
-	}
-
-	return $ip;
+	return TheStickPress_Client_IP_1::get();
 }
+
+/**
+ * The older `spam4me_trusted_proxies` filter keeps working, and now applies
+ * to every 4 Me plugin through the shared `thestickpress_trusted_proxies`.
+ *
+ * @param array $ranges Trusted proxy IPs or CIDR ranges.
+ * @return array
+ */
+function spam4me_shared_trusted_proxies( $ranges ) {
+	return (array) apply_filters( 'spam4me_trusted_proxies', $ranges );
+}
+add_filter( 'thestickpress_trusted_proxies', 'spam4me_shared_trusted_proxies', 5 );
 
 function spam4me_make_token( $time = null ) {
 	$time = null === $time ? time() : (int) $time;

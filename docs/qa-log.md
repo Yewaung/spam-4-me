@@ -2,6 +2,16 @@
 
 Newest first. One entry per QA check or push.
 
+## 2026-11-19: QA check and push, Spam 4 Me 2.5.1
+
+- Scope: spam4me_client_ip() returns the shared TheStickPress_Client_IP_1::get(), so all 4 Me plugins agree on the visitor; spam4me_trusted_proxies keeps working and feeds thestickpress_trusted_proxies; developer notes updated.
+- Security: same rule as before for Cloudflare; list headers now use the rightmost untrusted address.
+- Cost: none.
+- Checks: PHP lint (PHP 8.5.12) on every changed file, pass; 22 unit checks of the shared visitor IP class and Zip 4 Me backup names, pass; code review (medium) on all six repos found 8 issues in the first version of these fixes, all fixed and covered by the unit checks.
+- Not run (owner's decision, 2026-11-19): WordPress Plugin Check, smoke tests and the PHP error log, because the Local site was stopped. Run them the next time the site is up.
+- Research: Cloudflare ranges in the shared IP class match cloudflare.com/ips-v4 and ips-v6 (2026-11-19); no PHP 8.5 deprecated patterns (non canonical casts, setAccessible, E_USER_ERROR, case with semicolon, imagedestroy) in any 4 Me plugin; WordPress 7.2 (due 8 to 10 Dec 2026) changes nothing these plugins use.
+- Audit: .claude/audits/audit-2026-11-19-plugins.md in the site folder.
+
 ## 2026-11-18: QA check and push (no release)
 
 - .claude left out of release archives (`.gitattributes`); no plugin code changed.
